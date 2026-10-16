@@ -1,0 +1,33 @@
+# Compilação e Arquivos Gerados
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Pastas de build
+bin/
+build/
+target/
+
+# Eclipse IDE & WildFly Runtime
+.metadata/
+.Servers/
+.RemoteSystemsTempFiles/
+.settings/
+.project
+.classpath
+.factorypath
+*.tmp
+
+# Arquivos de Configuração / Sensíveis
+*.properties
+
+# Suporte a Outras IDEs
+.idea/
+*.iml
+.vscode/
+
+# Arquivos do Sistema Operacional
+.DS_Store
+Thumbs.db
