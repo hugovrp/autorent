@@ -12,7 +12,7 @@ abstract class CrudBean<T, ID extends Serializable> {
 		this.entityClass = entityCLass;
 	}
 	
-	public T create(T entidade) {
+	public T criar(T entidade) {
         if (entidade == null) 
         	throw new IllegalArgumentException("A entidade não pode ser nula.");
         
@@ -30,7 +30,7 @@ abstract class CrudBean<T, ID extends Serializable> {
         }
     }
 
-    public T update(T entidade) {
+    public T atualizar(T entidade) {
         if (entidade == null) 
         	throw new IllegalArgumentException("A entidade não pode ser nula.");
         
@@ -48,7 +48,7 @@ abstract class CrudBean<T, ID extends Serializable> {
         }
     }
 
-    public void delete(ID id) {
+    public void excluir(ID id) {
         if (id == null) 
         	throw new IllegalArgumentException("O identificador não pode ser nulo.");
         
@@ -68,7 +68,7 @@ abstract class CrudBean<T, ID extends Serializable> {
         }
     }
 
-    public T findById(ID id) {
+    public T buscarPorId(ID id) {
         if (id == null) 
         	return null;
         
@@ -82,7 +82,7 @@ abstract class CrudBean<T, ID extends Serializable> {
         }
     }
 
-    public List<T> findAll() {
+    public List<T> buscarTodos() {
         EntityManager em = JPAUtil.createEntityManager();
         
         try {

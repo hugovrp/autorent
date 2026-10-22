@@ -53,26 +53,26 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
     }
 
     @Override 
-    public Usuario getLoggedClient() { 
+    public Usuario obterClienteLogado() { 
     	return clienteLogado; 
     }
 
     @Override 
-    public void selectPickupAgency(Long agenciaId) { 
+    public void selecionarAgenciaRetirada(Long agenciaId) { 
     	agenciaRetirada = findAgency(agenciaId); 
     }
     
     @Override 
-    public void selectReturnAgency(Long agenciaId) { 
+    public void selecionarAgenciaDevolucao(Long agenciaId) { 
     	agenciaDevolucao = findAgency(agenciaId); 
     }
     
-    @Override public void selectVehicle(Long veiculoId) { 
-    	veiculoSelecionado = findVehicle(veiculoId); 
+    @Override public void selecionarVeiculo(Long veiculoId) { 
+    	veiculoSelecionado = buscarVeiculo(veiculoId); 
     }
 
     @Override
-    public void setRentalPeriod(LocalDate retirada, LocalDate devolucao) {
+    public void definirPeriodoLocacao(LocalDate retirada, LocalDate devolucao) {
         if (retirada == null || devolucao == null || devolucao.isBefore(retirada) || devolucao.equals(retirada))
             throw new IllegalArgumentException("O período deve possuir datas válidas e a devolução deve ser posterior à retirada.");
         
@@ -84,15 +84,15 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
     }
 
     @Override
-    public double calculateTotalValue() {
-    	validateData();
+    public double calcularValorTotal() {
+    	validarDados();
         long diarias = ChronoUnit.DAYS.between(dataRetirada, dataDevolucao);
         return diarias * veiculoSelecionado.getValorDiaria();
     }
 
     @Override
-    public Locacao confirmRental() {
-    	validateData();
+    public Locacao confirmarLocacao() {
+    	validarDados();
         
         EntityManager em = JPAUtil.createEntityManager();
         
@@ -129,12 +129,12 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
             // Ainda não houve devolução
             locacao.setDataDevolucao(null);
             locacao.setStatus(StatusLocacao.RESERVADA);
-            locacao.setValorTotal(calculateTotalValue());
+            locacao.setValorTotal(calcularValorTotal());
             
             em.persist(locacao);
             em.getTransaction().commit();
             
-            clearOperation();
+            limparOperacao();
             return locacao;
         } 
         finally { 
@@ -143,27 +143,27 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
     }
 
     @Override 
-    public Agencia getPickupAgency() { 
+    public Agencia obterAgenciaRetirada() { 
     	return agenciaRetirada; 
     }
     
     @Override 
-    public Agencia getReturnAgency() { 
+    public Agencia obterAgenciaDevolucao() { 
     	return agenciaDevolucao; 
     }
     
     @Override 
-    public Veiculo getSelectedVehicle() { 
+    public Veiculo obterVeiculoSelecionado() { 
     	return veiculoSelecionado; 
     }
     
     @Override 
-    public LocalDate getPickupDate() { 
+    public LocalDate obterDataRetirada() { 
     	return dataRetirada; 
     }
     
     @Override 
-    public LocalDate getReturnDate() { 
+    public LocalDate obterDataDevolucao() { 
     	return dataDevolucao; 
     }
 
@@ -186,7 +186,7 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         }
     }
 
-    private Veiculo findVehicle(Long id) {
+    private Veiculo buscarVeiculo(Long id) {
         if (id == null) 
         	throw new IllegalArgumentException("Informe um veículo.");
         
@@ -208,7 +208,7 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         }
     }
 
-    private void validateData() {
+    private void validarDados() {
         if (clienteLogado == null) 
         	throw new IllegalStateException("Faça login antes de realizar a locação.");
         
@@ -219,7 +219,7 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
             throw new IllegalStateException("O valor da diária do veículo é inválido.");
     }
 
-    private void clearOperation() {
+    private void limparOperacao() {
         agenciaRetirada = null;
         agenciaDevolucao = null;
         veiculoSelecionado = null;

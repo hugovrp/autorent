@@ -3,6 +3,8 @@ package br.autorent.sessionbeans;
 import java.util.List;
 
 import br.autorent.modelo.Agencia;
+import br.autorent.modelo.enums.CategoriaVeiculo;
+import br.autorent.modelo.enums.StatusVeiculo;
 import jakarta.ejb.Remote;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -16,7 +18,7 @@ public class AgenciaSB extends CrudBean<Agencia, Long> implements IAgencia {
     }
 
     @Override
-    public List<Agencia> findByCidade(String cidade) {
+    public List<Agencia> buscarPorCidade(String cidade) {
         if (cidade == null || cidade.isBlank()) 
         	return List.of();
         
@@ -32,7 +34,7 @@ public class AgenciaSB extends CrudBean<Agencia, Long> implements IAgencia {
     }
 
     @Override
-    public List<Agencia> findByNome(String nome) {
+    public List<Agencia> buscarPorNome(String nome) {
         if (nome == null || nome.isBlank()) 
         	return List.of();
         
@@ -44,6 +46,24 @@ public class AgenciaSB extends CrudBean<Agencia, Long> implements IAgencia {
         } 
         finally { 
         	em.close(); 
+        }
+    }
+    
+    @Override
+    public List<Agencia> buscarVeiculosDisponiveis(CategoriaVeiculo categoria) {
+        if (categoria == null)
+        	return List.of();
+
+        EntityManager em = JPAUtil.createEntityManager();
+
+        try {
+        	return em.createQuery("select distinct a from Agencia a join a.veiculos v "
+        			+ "where v.status = :status and v.categoria = :categoria order by a.nome", Agencia.class)
+        			.setParameter("status", StatusVeiculo.DISPONIVEL).setParameter("categoria", categoria)
+        			.getResultList();
+        }
+        finally {
+        	em.close();
         }
     }
 }

@@ -9,16 +9,16 @@ import br.autorent.modelo.Veiculo;
 
 public interface IOperacaoLocacao {
 	boolean login(String cpf, String password);
-	Usuario getLoggedClient();
-	void selectPickupAgency(Long agencyId);
-	void selectReturnAgency(Long agencyId);
-	void selectVehicle(Long vehicleId);
-	void setRentalPeriod(LocalDate pickupDate, LocalDate returnDate);
-	double calculateTotalValue();
-	Locacao confirmRental();
-	Agencia getPickupAgency();
-	Agencia getReturnAgency();
-	Veiculo getSelectedVehicle();
-	LocalDate getPickupDate();
-	LocalDate getReturnDate();
+	Usuario obterClienteLogado();
+	void selecionarAgenciaRetirada(Long agencyId);
+	void selecionarAgenciaDevolucao(Long agencyId);
+	void selecionarVeiculo(Long vehicleId);
+	void definirPeriodoLocacao(LocalDate pickupDate, LocalDate returnDate);
+	double calcularValorTotal();
+	Locacao confirmarLocacao();
+	Agencia obterAgenciaRetirada();
+	Agencia obterAgenciaDevolucao();
+	Veiculo obterVeiculoSelecionado();
+	LocalDate obterDataRetirada();
+	LocalDate obterDataDevolucao();
 }

@@ -17,25 +17,25 @@ public class ClienteSB extends CrudBean<Usuario, Long> implements ICliente {
     }
 
     @Override 
-    public Usuario create(Usuario cliente) {
+    public Usuario criar(Usuario cliente) {
         if (cliente == null) 
         	throw new IllegalArgumentException("O cliente não pode ser nulo.");
         
         cliente.setTipo(TipoUsuario.CLIENTE);
-        return super.create(cliente);
+        return super.criar(cliente);
     }
 
     @Override 
-    public Usuario update(Usuario cliente) {
+    public Usuario atualizar(Usuario cliente) {
         if (cliente == null) 
         	throw new IllegalArgumentException("O cliente não pode ser nulo.");
         
         cliente.setTipo(TipoUsuario.CLIENTE);
-        return super.update(cliente);
+        return super.atualizar(cliente);
     }
 
     @Override 
-    public Usuario findByCpf(String cpf) {
+    public Usuario buscarPorCpf(String cpf) {
         if (cpf == null || cpf.isBlank()) 
         	return null;
         
@@ -54,7 +54,7 @@ public class ClienteSB extends CrudBean<Usuario, Long> implements ICliente {
     }
     
     @Override 
-    public Usuario findByEmail(String email) {
+    public Usuario buscarPorEmail(String email) {
         if (email == null || email.isBlank()) 
         	return null;
         
@@ -71,7 +71,7 @@ public class ClienteSB extends CrudBean<Usuario, Long> implements ICliente {
     }
     
     @Override 
-    public List<Usuario> findByNome(String nome) {
+    public List<Usuario> buscarPorNome(String nome) {
         if (nome == null || nome.isBlank()) 
         	return List.of();
         
@@ -87,7 +87,7 @@ public class ClienteSB extends CrudBean<Usuario, Long> implements ICliente {
     }
     
     @Override 
-    public List<Usuario> findAll() {
+    public List<Usuario> buscarTodos() {
         EntityManager em = JPAUtil.createEntityManager();
         
         try { 

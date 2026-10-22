@@ -6,11 +6,11 @@ import br.autorent.modelo.Usuario;
 
 public interface ICliente extends ICrud<Usuario, Long> {
 	/** Busca pelo CPF (aceita com ou sem pontuação); devolve null se não existir. */
-	Usuario findByCpf(String cpf);
+	Usuario buscarPorCpf(String cpf);
 
 	/** Busca pelo e-mail; devolve null se não existir. */
-	Usuario findByEmail(String email);
+	Usuario buscarPorEmail(String email);
 
 	/** Clientes cujo nome contém o texto informado. */
-	List<Usuario> findByNome(String nome);
+	List<Usuario> buscarPorNome(String nome);
 }

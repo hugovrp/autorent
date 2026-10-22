@@ -28,55 +28,55 @@ public class StatusFrotaSB implements IStatusFrota {
 
     @PostConstruct
     private void initialize() { 
-    	refreshCache(); 
+    	atualizarCache(); 
     }
 
     @Override 
     @Lock(LockType.READ) 
-    public long getTotalVehicles() { 
+    public long obterTotalVeiculos() { 
     	return totalVeiculos; 
     }
     
     @Override
     @Lock(LockType.READ) 
-    public long getTotalAvailable() { 
+    public long obterTotalDisponiveis() { 
     	return totalDisponiveis; 
     }
     
     @Override 
     @Lock(LockType.READ) 
-    public long getTotalRented() { 
+    public long obterTotalAlugados() { 
     	return totalAlugados; 
     }
     
     @Override 
     @Lock(LockType.READ) 
-    public long getTotalReserved() { 
+    public long obterTotalReservados() { 
     	return totalReservados; 
     }
     
     @Override 
     @Lock(LockType.READ) 
-    public long getTotalInMaintenance() { 
+    public long obterTotalEmManutencao() { 
     	return totalEmManutencao; 
     }
     
     @Override 
     @Lock(LockType.READ) 
-    public Map<Long, Long> getAvailableByAgency() {
+    public Map<Long, Long> obterDisponiveisPorAgencia() {
         return Collections.unmodifiableMap(new HashMap<>(disponiveisPorAgencia));
     }
 
     @Override 
     @Lock(LockType.WRITE)
-    public void refreshCache() {
+    public void atualizarCache() {
         EntityManager em = JPAUtil.createEntityManager();
         
         try {
             totalVeiculos = em.createQuery("select count(v) from Veiculo v", Long.class).getSingleResult();
-            totalDisponiveis = countVehicles(em, StatusVeiculo.DISPONIVEL);
-            totalAlugados = countVehicles(em, StatusVeiculo.LOCADO);
-            totalEmManutencao = countVehicles(em, StatusVeiculo.MANUTENCAO);
+            totalDisponiveis = contarVeiculos(em, StatusVeiculo.DISPONIVEL);
+            totalAlugados = contarVeiculos(em, StatusVeiculo.LOCADO);
+            totalEmManutencao = contarVeiculos(em, StatusVeiculo.MANUTENCAO);
             totalReservados = em.createQuery("select count(l) from Locacao l where l.status = :status", Long.class).setParameter("status", StatusLocacao.RESERVADA).getSingleResult();
             Map<Long, Long> novoMapa = new HashMap<>();
             
@@ -95,7 +95,7 @@ public class StatusFrotaSB implements IStatusFrota {
         }
     }
 
-    private long countVehicles(EntityManager em, StatusVeiculo status) {
+    private long contarVeiculos(EntityManager em, StatusVeiculo status) {
         return em.createQuery("select count(v) from Veiculo v where v.status = :status", Long.class)
                 .setParameter("status", status).getSingleResult();
     }

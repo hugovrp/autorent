@@ -16,7 +16,7 @@ public class AcessorioSB extends CrudBean<Acessorio, Long> implements IAcessorio
 	}
 
     @Override 
-    public List<Acessorio> findByDescricao(String descricao) {
+    public List<Acessorio> buscarPorDescricao(String descricao) {
         if (descricao == null || descricao.isBlank()) 
         	return List.of();
         
@@ -32,7 +32,7 @@ public class AcessorioSB extends CrudBean<Acessorio, Long> implements IAcessorio
     }
     
     @Override 
-    public List<Acessorio> findByVeiculo(Long veiculoId) {
+    public List<Acessorio> buscarPorVeiculo(Long veiculoId) {
         if (veiculoId == null) 
         	return List.of();
         

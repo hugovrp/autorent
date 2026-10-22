@@ -18,7 +18,7 @@ public class VeiculoSB extends CrudBean<Veiculo, Long> implements IVeiculo {
     }
 
     @Override 
-    public List<Veiculo> findByAgencia(Long agenciaId) {
+    public List<Veiculo> buscarPorAgencia(Long agenciaId) {
         if (agenciaId == null) 
         	return List.of();
         
@@ -26,7 +26,7 @@ public class VeiculoSB extends CrudBean<Veiculo, Long> implements IVeiculo {
     }
     
     @Override 
-    public List<Veiculo> findByStatus(StatusVeiculo status) {
+    public List<Veiculo> buscarPorStatus(StatusVeiculo status) {
         if (status == null) 
         	return List.of();
         
@@ -34,7 +34,7 @@ public class VeiculoSB extends CrudBean<Veiculo, Long> implements IVeiculo {
     }
     
     @Override 
-    public List<Veiculo> findByCategoria(CategoriaVeiculo categoria) {
+    public List<Veiculo> buscarPorCategoria(CategoriaVeiculo categoria) {
         if (categoria == null) 
         	return List.of();
         
@@ -42,7 +42,7 @@ public class VeiculoSB extends CrudBean<Veiculo, Long> implements IVeiculo {
     }
     
     @Override 
-    public Veiculo findByPlaca(String placa) {
+    public Veiculo buscarPorPlaca(String placa) {
         if (placa == null || placa.isBlank()) 
         	return null;
         
@@ -60,7 +60,7 @@ public class VeiculoSB extends CrudBean<Veiculo, Long> implements IVeiculo {
     }
     
     @Override 
-    public List<Veiculo> findDisponiveis(Long agenciaId, CategoriaVeiculo categoria) {
+    public List<Veiculo> buscarDisponiveis(Long agenciaId, CategoriaVeiculo categoria) {
         EntityManager em = JPAUtil.createEntityManager();
         
         try {
@@ -85,6 +85,39 @@ public class VeiculoSB extends CrudBean<Veiculo, Long> implements IVeiculo {
         } 
         finally { 
         	em.close(); 
+        }
+    }
+    
+    @Override
+    public List<Veiculo> buscarDisponiveisPorAgencia(Long agenciaId) {
+        if (agenciaId == null)
+        	return List.of();
+
+        EntityManager em = JPAUtil.createEntityManager();
+
+        try {
+        	// JOIN FETCH traz a agência na mesma consulta (Veiculo.agencia é LAZY)
+        	return em.createQuery("select v from Veiculo v join fetch v.agencia a "
+        			+ "where a.id = :agenciaId and v.status = :status order by v.modelo", Veiculo.class)
+        			.setParameter("agenciaId", agenciaId).setParameter("status", StatusVeiculo.DISPONIVEL)
+        			.getResultList();
+        }
+        finally {
+        	em.close();
+        }
+    }
+
+    @Override
+    public List<Veiculo> buscarAlugados() {
+        EntityManager em = JPAUtil.createEntityManager();
+
+        try {
+        	return em.createQuery("select v from Veiculo v join fetch v.agencia "
+        			+ "where v.status = :status order by v.modelo", Veiculo.class)
+        			.setParameter("status", StatusVeiculo.LOCADO).getResultList();
+        }
+        finally {
+        	em.close();
         }
     }
     

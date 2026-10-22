@@ -48,7 +48,7 @@ public class UsuarioSB implements IUsuario {
     }
     
     @Override 
-    public Usuario getUsuarioLogado() { 
+    public Usuario obterClienteLogado() { 
     	return usuarioLogado; 
     }
 }
