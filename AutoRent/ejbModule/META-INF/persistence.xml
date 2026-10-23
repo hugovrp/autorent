@@ -3,6 +3,11 @@
 
 	<persistence-unit name="auto-rent" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+		<class>br.autorent.modelo.Agencia</class>
+		<class>br.autorent.modelo.Veiculo</class>
+		<class>br.autorent.modelo.Acessorio</class>
+		<class>br.autorent.modelo.Usuario</class>
+		<class>br.autorent.modelo.Locacao</class>
 		
 		<properties>
 			<property name = "hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />

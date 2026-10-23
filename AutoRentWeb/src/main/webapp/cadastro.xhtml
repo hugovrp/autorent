@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="/templates/layout.xhtml">
+		<ui:define name="titulo">Cadastro</ui:define>
+		<ui:define name="conteudo">
+			<h2>Cadastro de cliente</h2>
+	
+			<h:outputText value="#{cadastroMB.mensagemSucesso}" styleClass="alerta sucesso"
+				rendered="#{not empty cadastroMB.mensagemSucesso}" style="display:block;" />
+			<h:outputText value="#{cadastroMB.mensagemErro}" styleClass="alerta erro"
+				rendered="#{not empty cadastroMB.mensagemErro}" style="display:block;" />
+	
+			<h:form>
+				<div class="campo">
+					<h:outputLabel value="Nome completo" for="nome" />
+					<h:inputText id="nome" value="#{cadastroMB.cliente.nome}" maxlength="120"
+						required="true" requiredMessage="Informe o nome.">
+						<f:validateLength minimum="3" maximum="120" />
+					</h:inputText>
+					<h:message for="nome" styleClass="erro-campo" />
+				</div>
+	
+				<div class="campo">
+					<h:outputLabel value="CPF" for="cpf" />
+					<h:inputText id="cpf" value="#{cadastroMB.cliente.cpf}" maxlength="14"
+						required="true" requiredMessage="Informe o CPF.">
+						<f:validateRegex pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}" />
+					</h:inputText>
+					<h:message for="cpf" styleClass="erro-campo" />
+				</div>
+	
+				<div class="campo">
+					<h:outputLabel value="E-mail" for="email" />
+					<h:inputText id="email" value="#{cadastroMB.cliente.email}" maxlength="150"
+						required="true" requiredMessage="Informe o e-mail.">
+						<f:validateRegex pattern="[^@\s]+@[^@\s]+\.[^@\s]+" />
+					</h:inputText>
+					<h:message for="email" styleClass="erro-campo" />
+				</div>
+	
+				<div class="campo">
+					<h:outputLabel value="Senha (mínimo 6 caracteres)" for="senha" />
+					<h:inputSecret id="senha" value="#{cadastroMB.senha}"
+						required="true" requiredMessage="Informe a senha.">
+						<f:validateLength minimum="6" maximum="100" />
+					</h:inputSecret>
+					<h:message for="senha" styleClass="erro-campo" />
+				</div>
+	
+				<div class="campo">
+					<h:outputLabel value="Confirmar senha" for="confirmarSenha" />
+					<h:inputSecret id="confirmarSenha" value="#{cadastroMB.confirmarSenha}"
+						required="true" requiredMessage="Confirme a senha." />
+					<h:message for="confirmarSenha" styleClass="erro-campo" />
+				</div>
+	
+				<h:commandButton value="Cadastrar" action="#{cadastroMB.cadastrar}" styleClass="botao" />
+			</h:form>
+	
+			<p class="rodape-form">
+				Já tem conta? <h:link outcome="login" value="Entrar" />
+			</p>
+		</ui:define>
+	</ui:composition>
+</html>

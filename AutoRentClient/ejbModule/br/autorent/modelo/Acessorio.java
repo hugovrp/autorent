@@ -29,7 +29,7 @@ public class Acessorio implements Serializable {
 	@Column(nullable = false, length = 100)
 	private String descricao;
 	
-	@Column(name = "valor_diaria", nullable = false, precision = 10, scale = 2)
+	@Column(name = "valor_diaria", nullable = false)
 	private Double valorDiaria;
 	
 	// N:M - lado inverso (o dono da relação é Veiculo)
