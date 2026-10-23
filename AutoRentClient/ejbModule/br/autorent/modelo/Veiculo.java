@@ -53,7 +53,7 @@ private static final long serialVersionUID = 1L;
 	@Column(nullable = false, length = 20)
 	private CategoriaVeiculo categoria;
 	
-	@Column(name = "valor_diaria", nullable = false, precision = 10, scale = 2)
+	@Column(name = "valor_diaria", nullable = false)
 	private Double valorDiaria;
 	
 	@Enumerated(EnumType.STRING)

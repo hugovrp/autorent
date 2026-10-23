@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="/templates/layout.xhtml">
+		<ui:define name="titulo">Minha área</ui:define>
+		<ui:define name="conteudo">
+			<h2>Olá, #{sessaoMB.usuario.nome}!</h2>
+			<p>
+				Perfil:
+				<h:outputText value="Administrador" rendered="#{sessaoMB.admin}" />
+				<h:outputText value="Cliente" rendered="#{sessaoMB.cliente}" />
+			</p>
+			<p>E-mail: #{sessaoMB.usuario.email}</p>
+			<p><h:link outcome="veiculos" value="Consultar veículos" /></p>
+		</ui:define>
+	</ui:composition>
+</html>

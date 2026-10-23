@@ -62,7 +62,7 @@ public class Locacao implements Serializable {
 	@Column(nullable = false, length = 20)
 	private StatusLocacao status = StatusLocacao.RESERVADA;
 	
-	@Column(name = "valor_total", precision = 10, scale = 2)
+	@Column(name = "valor_total")
 	private Double valorTotal;
 	
 	public Locacao() { }

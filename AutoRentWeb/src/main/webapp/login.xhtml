@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="/templates/layout.xhtml">
+		<ui:define name="titulo">Login</ui:define>
+		<ui:define name="conteudo">
+			<h2>Entrar</h2>
+	
+			<h:outputText value="#{loginMB.mensagemErro}" styleClass="alerta erro"
+				rendered="#{not empty loginMB.mensagemErro}" style="display:block;" />
+	
+			<h:form>
+				<div class="campo">
+					<h:outputLabel value="CPF" for="cpf" />
+					<h:inputText id="cpf" value="#{loginMB.cpf}" maxlength="14"
+						required="true" requiredMessage="Informe o CPF.">
+						<f:validateRegex pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}" />
+					</h:inputText>
+					<h:message for="cpf" styleClass="erro-campo" />
+				</div>
+	
+				<div class="campo">
+					<h:outputLabel value="Senha" for="senha" />
+					<h:inputSecret id="senha" value="#{loginMB.senha}"
+						required="true" requiredMessage="Informe a senha." />
+					<h:message for="senha" styleClass="erro-campo" />
+				</div>
+	
+				<h:commandButton value="Entrar" action="#{loginMB.entrar}" styleClass="botao" />
+			</h:form>
+	
+			<p class="rodape-form">
+				Ainda não tem conta? <h:link outcome="cadastro" value="Cadastre-se" />
+			</p>
+		</ui:define>
+	</ui:composition>
+</html>
