@@ -15,10 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Controle de acesso por perfil (declarado no web.xml):
+ * Controle de acesso por perfil:
  *  - páginas públicas: index, login e cadastro;
  *  - demais páginas: exigem usuário autenticado;
- *  - /admin/*: exigem perfil administrador (FUNCIONARIO).
  */
 public class AcessoFilter implements Filter {
 
@@ -28,7 +27,7 @@ public class AcessoFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-		String caminho = request.getRequestURI().substring(request.getContextPath().length());
+		String caminho = request.getServletPath(); 
 
 		if (ehPublico(caminho)) {
 			chain.doFilter(request, response);

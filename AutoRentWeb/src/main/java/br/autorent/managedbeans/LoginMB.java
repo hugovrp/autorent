@@ -17,12 +17,14 @@ public class LoginMB {
 	public String entrar() {
 		try {
 			if (sessaoMB.login(cpf, senha)) {
-				return "home?faces-redirect=true";
+				return sessaoMB.isAdmin() ? "/admin/dashboard?faces-redirect=true" : "/dashboard?faces-redirect=true";
 			}
 			mensagemErro = "CPF ou senha inválidos.";
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			mensagemErro = "Não foi possível realizar o login. Tente novamente em instantes.";
 		}
+		
 		senha = null;
 		return null;
 	}

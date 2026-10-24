@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="/templates/layout.xhtml">
+		<ui:param name="largo" value="true" />
+	
+		<ui:define name="titulo">Minhas reservas</ui:define>
+		<ui:define name="conteudo">
+			<h2>Minhas reservas e locações</h2>
+	
+			<h:outputText value="#{minhasReservasMB.mensagemErro}" styleClass="alerta erro"
+				rendered="#{not empty minhasReservasMB.mensagemErro}" style="display:block;" />
+	
+			<h:form>
+				<div class="filtros">
+					<div class="campo">
+						<h:outputLabel value="Status" for="status" />
+						<h:selectOneMenu id="status" value="#{minhasReservasMB.status}">
+							<f:selectItem itemLabel="Todos" noSelectionOption="true" />
+							<f:selectItems value="#{minhasReservasMB.statusDisponiveis}" var="s" itemValue="#{s}"
+								itemLabel="#{minhasReservasMB.rotulo(s)}" />
+						</h:selectOneMenu>
+					</div>
+					<h:commandButton value="Filtrar" styleClass="botao" />
+				</div>
+	
+				<h:outputText value="Você ainda não possui reservas ou locações."
+					rendered="#{empty minhasReservasMB.locacoes and empty minhasReservasMB.mensagemErro}"
+					styleClass="alerta erro" style="display:block;" />
+	
+				<h:dataTable value="#{minhasReservasMB.locacoes}" var="l" styleClass="tabela"
+					rendered="#{not empty minhasReservasMB.locacoes}">
+					<h:column>
+						<f:facet name="header">Nº</f:facet>
+						#{l.id}
+					</h:column>
+					<h:column>
+						<f:facet name="header">Veículo</f:facet>
+						#{l.veiculo.marca} #{l.veiculo.modelo}<br/>
+						<small>#{l.veiculo.placa}</small>
+					</h:column>
+					<h:column>
+						<f:facet name="header">Retirada</f:facet>
+						<h:outputText value="#{l.dataRetirada}">
+							<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+						</h:outputText><br/>
+						<small>#{l.agenciaRetirada.nome} - #{l.agenciaRetirada.cidade}</small>
+					</h:column>
+					<h:column>
+						<f:facet name="header">Devolução prevista</f:facet>
+						<h:outputText value="#{l.dataPrevDevolucao}">
+							<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+						</h:outputText><br/>
+						<small>#{l.agenciaDevolucao.nome} - #{l.agenciaDevolucao.cidade}</small>
+					</h:column>
+					<h:column>
+						<f:facet name="header">Devolvido em</f:facet>
+						<h:outputText value="#{l.dataDevolucao}" rendered="#{not empty l.dataDevolucao}">
+							<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+						</h:outputText>
+						<h:outputText value="-" rendered="#{empty l.dataDevolucao}" />
+					</h:column>
+					<h:column>
+						<f:facet name="header">Valor total</f:facet>
+						<h:outputText value="#{l.valorTotal}">
+							<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+						</h:outputText>
+					</h:column>
+					<h:column>
+						<f:facet name="header">Status</f:facet>
+						<h:outputText value="#{minhasReservasMB.rotulo(l.status)}"
+							styleClass="selo #{l.status eq 'RESERVADA' ? 'reservada' : (l.status eq 'ATIVA' ? 'ativa' : (l.status eq 'FINALIZADA' ? 'finalizada' : 'cancelada'))}" />
+					</h:column>
+				</h:dataTable>
+			</h:form>
+	
+			<p class="rodape-form">
+				<h:link outcome="veiculos" value="Consultar veículos para uma nova reserva" />
+			</p>
+		</ui:define>
+	</ui:composition>
+</html>

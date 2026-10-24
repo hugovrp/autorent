@@ -12,7 +12,10 @@
 				<h:outputText value="Cliente" rendered="#{sessaoMB.cliente}" />
 			</p>
 			<p>E-mail: #{sessaoMB.usuario.email}</p>
+			<p><h:link outcome="/admin/dashboard" value="Dashboard administrativo" rendered="#{sessaoMB.admin}" /></p>
+			<p><h:link outcome="dashboard" value="Meu painel" rendered="#{sessaoMB.cliente}" /></p>
 			<p><h:link outcome="veiculos" value="Consultar veículos" /></p>
+			<p><h:link outcome="minhasReservas" value="Minhas reservas" rendered="#{sessaoMB.cliente}" /></p>
 		</ui:define>
 	</ui:composition>
 </html>

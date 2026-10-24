@@ -13,18 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Guarda o usuário autenticado durante toda a sessão HTTP.
- * Precisa ser @SessionScoped: assim o mesmo Stateful Session Bean (UsuarioSB)
- * é reaproveitado em todas as requisições do usuário.
- *
- * Toda a validação de credenciais é feita pelo EJB (IUsuario.login); este MB
- * apenas guarda o resultado e o expõe para as páginas e para o filtro de acesso.
  */
 @Named("sessaoMB")
 @SessionScoped
 public class SessaoMB implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	/** Nome do atributo da HttpSession lido pelo AcessoFilter. */
 	public static final String ATRIBUTO_USUARIO = "usuarioLogado";
 
 	@EJB
@@ -40,11 +34,11 @@ public class SessaoMB implements Serializable {
 			usuario = null;
 			return false;
 		}
+		
 		usuario = iUsuario.obterClienteLogado();
-
-		// evita fixação de sessão: novo id de sessão após autenticar
 		request.changeSessionId();
 		request.getSession().setAttribute(ATRIBUTO_USUARIO, usuario);
+		
 		return true;
 	}
 
@@ -52,7 +46,7 @@ public class SessaoMB implements Serializable {
 		iUsuario.logout();
 		usuario = null;
 		request.getSession().invalidate();
-		return "login?faces-redirect=true";
+		return "/login?faces-redirect=true";
 	}
 
 	public boolean isLogado() {

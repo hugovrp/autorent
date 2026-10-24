@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="/templates/layout.xhtml">
+		<ui:define name="titulo">Reservar veículo</ui:define>
+		<ui:define name="conteudo">
+			<h2>Reservar veículo</h2>
+	
+			<h:panelGroup rendered="#{not sessaoMB.cliente}">
+				<p class="alerta erro">Somente clientes podem realizar reservas.</p>
+			</h:panelGroup>
+	
+			<h:panelGroup rendered="#{sessaoMB.cliente and empty veiculoMB.veiculoSelecionado}">
+				<p class="alerta erro">Nenhum veículo selecionado. Escolha um veículo na consulta.</p>
+			</h:panelGroup>
+	
+			<h:panelGroup rendered="#{sessaoMB.cliente and not empty veiculoMB.veiculoSelecionado}">
+				<div class="resumo">
+					<strong>#{veiculoMB.veiculoSelecionado.marca} #{veiculoMB.veiculoSelecionado.modelo}</strong>
+					(#{veiculoMB.veiculoSelecionado.ano}) - placa #{veiculoMB.veiculoSelecionado.placa}<br/>
+					Diária:
+					<h:outputText value="#{veiculoMB.veiculoSelecionado.valorDiaria}">
+						<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+					</h:outputText>
+				</div>
+	
+				<h:outputText value="#{reservaMB.mensagemSucesso}" styleClass="alerta sucesso"
+					rendered="#{not empty reservaMB.mensagemSucesso}" style="display:block;" />
+				<h:outputText value="#{reservaMB.mensagemErro}" styleClass="alerta erro"
+					rendered="#{not empty reservaMB.mensagemErro}" style="display:block;" />
+	
+				<h:panelGroup rendered="#{not empty reservaMB.reserva}">
+					<table class="detalhes">
+						<tr><th>Reserva nº</th><td>#{reservaMB.reserva.id}</td></tr>
+						<tr>
+							<th>Retirada</th>
+							<td>
+								<h:outputText value="#{reservaMB.reserva.dataRetirada}">
+									<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</td>
+						</tr>
+						<tr>
+							<th>Devolução prevista</th>
+							<td>
+								<h:outputText value="#{reservaMB.reserva.dataPrevDevolucao}">
+									<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</td>
+						</tr>
+						<tr>
+							<th>Valor total</th>
+							<td>
+								<h:outputText value="#{reservaMB.reserva.valorTotal}">
+									<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+								</h:outputText>
+							</td>
+						</tr>
+					</table>
+					<h:link outcome="minhasReservas" value="Ver minhas reservas" />
+				</h:panelGroup>
+	
+				<h:form rendered="#{empty reservaMB.reserva}">
+					<div class="campo">
+						<h:outputLabel value="Agência de retirada" for="agenciaRetirada" />
+						<h:selectOneMenu id="agenciaRetirada" value="#{reservaMB.agenciaRetiradaId}"
+							required="true" requiredMessage="Escolha a agência de retirada.">
+							<f:selectItem itemLabel="Selecione..." noSelectionOption="true" />
+							<f:selectItems value="#{reservaMB.agencias}" var="a" itemValue="#{a.id}" itemLabel="#{a.nome} - #{a.cidade}" />
+						</h:selectOneMenu>
+						<h:message for="agenciaRetirada" styleClass="erro-campo" />
+					</div>
+	
+					<div class="campo">
+						<h:outputLabel value="Agência de devolução" for="agenciaDevolucao" />
+						<h:selectOneMenu id="agenciaDevolucao" value="#{reservaMB.agenciaDevolucaoId}"
+							required="true" requiredMessage="Escolha a agência de devolução.">
+							<f:selectItem itemLabel="Selecione..." noSelectionOption="true" />
+							<f:selectItems value="#{reservaMB.agencias}" var="a" itemValue="#{a.id}" itemLabel="#{a.nome} - #{a.cidade}" />
+						</h:selectOneMenu>
+						<h:message for="agenciaDevolucao" styleClass="erro-campo" />
+					</div>
+	
+					<div class="campo">
+						<h:outputLabel value="Data de retirada" for="dataRetirada" />
+						<h:inputText id="dataRetirada" value="#{reservaMB.dataRetirada}" pt:type="date"
+							required="true" requiredMessage="Informe a data de retirada."
+							converterMessage="Data de retirada inválida.">
+							<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+						</h:inputText>
+						<h:message for="dataRetirada" styleClass="erro-campo" />
+					</div>
+	
+					<div class="campo">
+						<h:outputLabel value="Data de devolução" for="dataDevolucao" />
+						<h:inputText id="dataDevolucao" value="#{reservaMB.dataDevolucao}" pt:type="date"
+							required="true" requiredMessage="Informe a data de devolução."
+							converterMessage="Data de devolução inválida.">
+							<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
+						</h:inputText>
+						<h:message for="dataDevolucao" styleClass="erro-campo" />
+					</div>
+	
+					<div class="campo">
+						<h:outputLabel value="Confirme sua senha" for="senha" />
+						<h:inputSecret id="senha" value="#{reservaMB.senha}"
+							required="true" requiredMessage="Informe sua senha para confirmar a reserva." />
+						<h:message for="senha" styleClass="erro-campo" />
+					</div>
+	
+					<h:commandButton value="Confirmar reserva" action="#{reservaMB.reservar}" styleClass="botao" />
+				</h:form>
+			</h:panelGroup>
+	
+			<p class="rodape-form">
+				<h:link outcome="veiculos" value="&#8592; Voltar à consulta de veículos" />
+			</p>
+		</ui:define>
+	</ui:composition>
+</html>

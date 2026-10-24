@@ -55,7 +55,7 @@ public class Locacao implements Serializable {
 	private LocalDate dataPrevDevolucao;
 	
 	// Preenchida somente quando o veículo é efetivamente devolvido
-	@Column(name = "data_devolucao", nullable = false)
+	@Column(name = "data_devolucao")
 	private LocalDate dataDevolucao;
 	
 	@Enumerated(EnumType.STRING)
@@ -64,6 +64,7 @@ public class Locacao implements Serializable {
 	
 	@Column(name = "valor_total")
 	private Double valorTotal;
+	
 	
 	public Locacao() { }
 

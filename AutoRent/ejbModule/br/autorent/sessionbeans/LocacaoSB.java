@@ -1,10 +1,14 @@
 package br.autorent.sessionbeans;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import br.autorent.modelo.Locacao;
+import br.autorent.modelo.Veiculo;
 import br.autorent.modelo.enums.CategoriaVeiculo;
 import br.autorent.modelo.enums.StatusLocacao;
+import br.autorent.modelo.enums.StatusVeiculo;
 import jakarta.ejb.Remote;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
@@ -19,7 +23,75 @@ public class LocacaoSB extends CrudBean<Locacao, Long> implements ILocacao {
 
     @Override 
     public List<Locacao> buscarPorCliente(Long clienteId) {
-        return executarConsultaPorId("select l from Locacao l where l.cliente.id = :id order by l.dataRetirada desc", clienteId);
+    	return executarConsultaPorId("select l from Locacao l where l.cliente.id = :id order by l.dataRetirada desc", clienteId);
+    }
+    
+    @Override
+    public List<Locacao> buscarPorClienteCompleto(Long clienteId) {
+    	if (clienteId == null)
+        	return List.of();
+
+        EntityManager em = JPAUtil.createEntityManager();
+
+        try {
+        	return em.createQuery("select l from Locacao l join fetch l.veiculo join fetch l.agenciaRetirada join fetch l.agenciaDevolucao "
+        			+ "where l.cliente.id = :clienteId order by l.dataRetirada desc", Locacao.class)
+        			.setParameter("clienteId", clienteId).getResultList();
+        }
+        finally {
+        	em.close();
+        }
+    }
+    
+    @Override
+    public void registrarRetirada(Long locacaoId) {
+        alterar(locacaoId, StatusLocacao.RESERVADA, (l, v) -> {
+            if (v.getStatus() != StatusVeiculo.DISPONIVEL)
+                throw new IllegalStateException("O veículo não está disponível para retirada.");
+            l.setStatus(StatusLocacao.ATIVA);
+            v.setStatus(StatusVeiculo.LOCADO);
+        });
+    }
+
+    @Override
+    public void registrarDevolucao(Long locacaoId) {
+        alterar(locacaoId, StatusLocacao.ATIVA, (l, v) -> {
+            l.setStatus(StatusLocacao.FINALIZADA);
+            l.setDataDevolucao(LocalDate.now());
+            v.setStatus(StatusVeiculo.DISPONIVEL);
+            v.setAgencia(l.getAgenciaDevolucao()); // o carro passa a ficar na agência de devolução
+        });
+    }
+
+    @Override
+    public void cancelar(Long locacaoId) {
+        alterar(locacaoId, StatusLocacao.RESERVADA, (l, v) -> l.setStatus(StatusLocacao.CANCELADA));
+    }
+
+    private void alterar(Long id, StatusLocacao statusEsperado, BiConsumer<Locacao, Veiculo> acao) {
+        if (id == null)
+        	throw new IllegalArgumentException("Informe a locação.");
+
+        EntityManager em = JPAUtil.createEntityManager();
+
+        try {
+        	em.getTransaction().begin();
+        	Locacao l = em.find(Locacao.class, id);
+
+        	if (l == null)
+        		throw new IllegalArgumentException("Locação não encontrada.");
+
+        	if (l.getStatus() != statusEsperado)
+        		throw new IllegalStateException("A locação precisa estar com status " + statusEsperado + " para esta operação.");
+
+        	acao.accept(l, l.getVeiculo());
+        	em.getTransaction().commit();
+        }
+        finally {
+        	if (em.getTransaction().isActive())
+        		em.getTransaction().rollback();
+        	em.close();
+        }
     }
     
     @Override 
@@ -56,13 +128,10 @@ public class LocacaoSB extends CrudBean<Locacao, Long> implements ILocacao {
         EntityManager em = JPAUtil.createEntityManager();
 
         try {
-        	return em.createQuery("select l from Locacao l "
-        			+ "join fetch l.cliente c join fetch l.veiculo "
-        			+ "join fetch l.agenciaRetirada join fetch l.agenciaDevolucao "
-        			+ "where c.id = :clienteId and l.status = :status "
+        	return em.createQuery("select l from Locacao l join fetch l.cliente c join fetch l.veiculo "
+        			+ "join fetch l.agenciaRetirada join fetch l.agenciaDevolucao where c.id = :clienteId and l.status = :status "
         			+ "order by l.dataRetirada desc", Locacao.class)
-        			.setParameter("clienteId", clienteId).setParameter("status", StatusLocacao.ATIVA)
-        			.getResultList();
+        			.setParameter("clienteId", clienteId).setParameter("status", StatusLocacao.ATIVA).getResultList();
         }
         finally {
         	em.close();
@@ -78,13 +147,10 @@ public class LocacaoSB extends CrudBean<Locacao, Long> implements ILocacao {
 
         try {
         	// Relaciona Locacao -> Veiculo (filtro por categoria), Usuario e Agencia
-        	return em.createQuery("select l from Locacao l "
-        			+ "join fetch l.veiculo v join fetch l.cliente "
-        			+ "join fetch l.agenciaRetirada join fetch l.agenciaDevolucao "
-        			+ "where v.categoria = :categoria and l.status = :status "
+        	return em.createQuery("select l from Locacao l join fetch l.veiculo v join fetch l.cliente "
+        			+ "join fetch l.agenciaRetirada join fetch l.agenciaDevolucao where v.categoria = :categoria and l.status = :status "
         			+ "order by l.dataRetirada desc", Locacao.class)
-        			.setParameter("categoria", categoria).setParameter("status", status)
-        			.getResultList();
+        			.setParameter("categoria", categoria).setParameter("status", status).getResultList();
         }
         finally {
         	em.close();

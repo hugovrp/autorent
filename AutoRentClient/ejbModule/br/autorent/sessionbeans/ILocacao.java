@@ -10,7 +10,17 @@ public interface ILocacao extends ICrud<Locacao, Long> {
 
 	/** Locações de um cliente. */
 	List<Locacao> buscarPorCliente(Long clienteId);
+	
+	/** Locações de um cliente com veículo e agências já carregados (relações LAZY). */
+	List<Locacao> buscarPorClienteCompleto(Long clienteId);
 
+	void registrarRetirada(Long locacaoId);
+
+	void registrarDevolucao(Long locacaoId);
+
+	/** Cancela uma reserva. */
+	void cancelar(Long locacaoId);
+	
 	/** Histórico de locações de um veículo. */
 	List<Locacao> buscarPorVeiculo(Long veiculoId);
 

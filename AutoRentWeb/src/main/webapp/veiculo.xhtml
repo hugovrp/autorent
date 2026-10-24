@@ -65,6 +65,10 @@
 				</h:dataTable>
 			</h:panelGroup>
 	
+			<h:form rendered="#{not empty veiculoMB.veiculoSelecionado and sessaoMB.cliente and veiculoMB.isDisponivel(veiculoMB.veiculoSelecionado)}">
+				<h:commandButton value="Reservar este veículo" action="reserva?faces-redirect=true" styleClass="botao" />
+			</h:form>
+	
 			<p class="rodape-form">
 				<h:link outcome="veiculos" value="&#8592; Voltar à consulta de veículos" />
 			</p>

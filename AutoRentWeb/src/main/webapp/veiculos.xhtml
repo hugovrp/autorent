@@ -1,90 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
 	<ui:composition template="/templates/layout.xhtml">
-		<ui:param name="largo" value="true" />
-	
-		<ui:define name="titulo">Veículos</ui:define>
-	
-		<ui:define name="metadata">
-			<f:viewAction action="#{veiculoMB.pesquisar}" />
-		</ui:define>
-	
-		<ui:define name="conteudo">
-			<h2>Consulta de veículos</h2>
-	
-			<h:outputText value="#{veiculoMB.mensagemErro}" styleClass="alerta erro"
-				rendered="#{not empty veiculoMB.mensagemErro}" style="display:block;" />
-	
-			<h:form>
-				<div class="filtros">
-					<div class="campo">
-						<h:outputLabel value="Categoria" for="categoria" />
-						<h:selectOneMenu id="categoria" value="#{veiculoMB.categoria}">
-							<f:selectItem itemLabel="Todas" noSelectionOption="true" />
-							<f:selectItems value="#{veiculoMB.categorias}" var="c" itemValue="#{c}" itemLabel="#{c}" />
-						</h:selectOneMenu>
-					</div>
-	
-					<div class="campo">
-						<h:outputLabel value="Agência" for="agencia" />
-						<h:selectOneMenu id="agencia" value="#{veiculoMB.agenciaId}">
-							<f:selectItem itemLabel="Todas" noSelectionOption="true" />
-							<f:selectItems value="#{veiculoMB.agencias}" var="a" itemValue="#{a.id}" itemLabel="#{a.nome} - #{a.cidade}" />
-						</h:selectOneMenu>
-					</div>
-	
-					<div class="campo">
-						<h:outputLabel value="Disponibilidade" for="disponibilidade" />
-						<h:selectOneMenu id="disponibilidade" value="#{veiculoMB.disponibilidade}">
-							<f:selectItem itemLabel="Todos" noSelectionOption="true" />
-							<f:selectItem itemLabel="Disponíveis" itemValue="DISPONIVEL" />
-							<f:selectItem itemLabel="Indisponíveis (alugados)" itemValue="LOCADO" />
-						</h:selectOneMenu>
-					</div>
-	
-					<h:commandButton value="Filtrar" action="#{veiculoMB.pesquisar}" styleClass="botao" />
-					<h:commandButton value="Limpar filtros" action="#{veiculoMB.limpar}" styleClass="botao secundario" />
+	<ui:param name="largo" value="true" />
+
+	<ui:define name="titulo">Veículos</ui:define>
+
+	<ui:define name="metadata">
+		<f:viewAction action="#{veiculoMB.pesquisar}" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h2>Consulta de veículos</h2>
+
+		<h:outputText value="#{veiculoMB.mensagemErro}" styleClass="alerta erro"
+			rendered="#{not empty veiculoMB.mensagemErro}" style="display:block;" />
+
+		<h:form>
+			<div class="filtros">
+				<div class="campo">
+					<h:outputLabel value="Categoria" for="categoria" />
+					<h:selectOneMenu id="categoria" value="#{veiculoMB.categoria}">
+						<f:selectItem itemLabel="Todas" noSelectionOption="true" />
+						<f:selectItems value="#{veiculoMB.categorias}" var="c" itemValue="#{c}" itemLabel="#{c}" />
+					</h:selectOneMenu>
 				</div>
-	
-				<h:outputText value="Nenhum veículo encontrado para os filtros informados."
-					rendered="#{empty veiculoMB.veiculos and empty veiculoMB.mensagemErro}" styleClass="alerta erro"
-					style="display:block;" />
-	
-				<h:dataTable value="#{veiculoMB.veiculos}" var="v" styleClass="tabela"
-					rendered="#{not empty veiculoMB.veiculos}">
-					<h:column>
-						<f:facet name="header">Veículo</f:facet>
-						#{v.marca} #{v.modelo}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Ano</f:facet>
-						#{v.ano}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Categoria</f:facet>
-						#{v.categoria}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Agência</f:facet>
-						#{v.agencia.nome} - #{v.agencia.cidade}
-					</h:column>
-					<h:column>
-						<f:facet name="header">Diária</f:facet>
-						<h:outputText value="#{v.valorDiaria}">
-							<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
-						</h:outputText>
-					</h:column>
-					<h:column>
-						<f:facet name="header">Situação</f:facet>
-						<h:outputText value="Disponível" styleClass="selo ok" rendered="#{veiculoMB.isDisponivel(v)}" />
-						<h:outputText value="Indisponível" styleClass="selo indisponivel" rendered="#{not veiculoMB.isDisponivel(v)}" />
-					</h:column>
-					<h:column>
-						<h:commandLink value="Ver detalhes" action="#{veiculoMB.detalhar(v)}" />
-					</h:column>
-				</h:dataTable>
-			</h:form>
-		</ui:define>
-	</ui:composition>
+
+				<div class="campo">
+					<h:outputLabel value="Agência" for="agencia" />
+					<h:selectOneMenu id="agencia" value="#{veiculoMB.agenciaId}">
+						<f:selectItem itemLabel="Todas" noSelectionOption="true" />
+						<f:selectItems value="#{veiculoMB.agencias}" var="a" itemValue="#{a.id}" itemLabel="#{a.nome} - #{a.cidade}" />
+					</h:selectOneMenu>
+				</div>
+
+				<div class="campo">
+					<h:outputLabel value="Disponibilidade" for="disponibilidade" />
+					<h:selectOneMenu id="disponibilidade" value="#{veiculoMB.disponibilidade}">
+						<f:selectItem itemLabel="Todos" noSelectionOption="true" />
+						<f:selectItem itemLabel="Disponíveis" itemValue="DISPONIVEL" />
+						<f:selectItem itemLabel="Indisponíveis (alugados)" itemValue="LOCADO" />
+					</h:selectOneMenu>
+				</div>
+
+				<h:commandButton value="Filtrar" action="#{veiculoMB.pesquisar}" styleClass="botao" />
+				<h:commandButton value="Limpar filtros" action="#{veiculoMB.limpar}" styleClass="botao secundario" />
+			</div>
+
+			<h:outputText value="Nenhum veículo encontrado para os filtros informados."
+				rendered="#{empty veiculoMB.veiculos and empty veiculoMB.mensagemErro}" styleClass="alerta erro"
+				style="display:block;" />
+
+			<h:dataTable value="#{veiculoMB.veiculos}" var="v" styleClass="tabela"
+				rendered="#{not empty veiculoMB.veiculos}">
+				<h:column>
+					<f:facet name="header">Veículo</f:facet>
+					#{v.marca} #{v.modelo}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Ano</f:facet>
+					#{v.ano}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Categoria</f:facet>
+					#{v.categoria}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Agência</f:facet>
+					#{v.agencia.nome} - #{v.agencia.cidade}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Diária</f:facet>
+					<h:outputText value="#{v.valorDiaria}">
+						<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+					</h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Situação</f:facet>
+					<h:outputText value="Disponível" styleClass="selo ok" rendered="#{veiculoMB.isDisponivel(v)}" />
+					<h:outputText value="Indisponível" styleClass="selo indisponivel" rendered="#{not veiculoMB.isDisponivel(v)}" />
+				</h:column>
+				<h:column>
+					<h:commandLink value="Ver detalhes" action="#{veiculoMB.detalhar(v)}" />
+					<h:panelGroup rendered="#{sessaoMB.cliente and veiculoMB.isDisponivel(v)}">
+						 | <h:commandLink value="Reservar" action="#{veiculoMB.reservar(v)}" />
+					</h:panelGroup>
+				</h:column>
+			</h:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
 </html>

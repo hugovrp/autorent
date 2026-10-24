@@ -19,15 +19,6 @@ import jakarta.inject.Named;
 
 /**
  * Consulta de veículos da área do cliente.
- *
- * É @SessionScoped para que os filtros escolhidos e o veículo selecionado sejam
- * mantidos ao ir da listagem para os detalhes e voltar. Os dados são sempre
- * consultados de novo no backend a cada abertura da listagem (f:viewAction).
- *
- * Observação: Veiculo.agencia é LAZY no backend, por isso só são usados os
- * serviços que já devolvem a agência carregada (buscarDisponiveisPorAgencia e
- * buscarAlugados). O catálogo do cliente exibe veículos disponíveis e alugados;
- * veículos em manutenção não são exibidos.
  */
 @Named("veiculoMB")
 @SessionScoped
@@ -41,8 +32,6 @@ public class VeiculoMB implements Serializable {
 
 	private List<Veiculo> veiculos = new ArrayList<>();
 	private List<Agencia> agencias = new ArrayList<>();
-
-	// detalhes
 	private Veiculo veiculoSelecionado;
 	private List<Acessorio> acessorios = new ArrayList<>();
 
@@ -67,7 +56,8 @@ public class VeiculoMB implements Serializable {
 			if (disponibilidade == null || disponibilidade == StatusVeiculo.DISPONIVEL) {
 				if (agenciaId != null) {
 					veiculos.addAll(iVeiculo.buscarDisponiveisPorAgencia(agenciaId));
-				} else {
+				} 
+				else {
 					for (Agencia agencia : agencias) {
 						veiculos.addAll(iVeiculo.buscarDisponiveisPorAgencia(agencia.getId()));
 					}
@@ -87,7 +77,8 @@ public class VeiculoMB implements Serializable {
 			}
 
 			veiculos.sort(Comparator.comparing(Veiculo::getMarca).thenComparing(Veiculo::getModelo));
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			veiculos = new ArrayList<>();
 			mensagemErro = "Não foi possível consultar os veículos no momento. Tente novamente em instantes.";
 		}
@@ -107,10 +98,17 @@ public class VeiculoMB implements Serializable {
 
 		try {
 			acessorios = iAcessorio.buscarPorVeiculo(veiculo.getId());
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			mensagemErro = "Não foi possível carregar os acessórios deste veículo.";
 		}
 		return "veiculo?faces-redirect=true";
+	}
+
+	public String reservar(Veiculo veiculo) {
+		mensagemErro = null;
+		veiculoSelecionado = veiculo;
+		return "reserva?faces-redirect=true";
 	}
 
 	public CategoriaVeiculo[] getCategorias() {
