@@ -36,21 +36,6 @@ AutoRentWeb/         → WAR: managed beans CDI, páginas XHTML, filtro de acess
 AutoRentDesktop/     → Aplicação Java SE (Swing) usada pelos funcionários
 ```
 
-### Principais session beans
-
-| Bean | Tipo | Responsabilidade |
-|---|---|---|
-| `UsuarioSB` | `@Stateful` | Login/logout e usuário autenticado |
-| `OperacaoLocacaoSB` | `@Stateful` | Fluxo de nova locação (agências, veículo, período, confirmação) |
-| `ClienteSB` | `@Stateless` | CRUD e pesquisa de clientes |
-| `AgenciaSB` | `@Stateless` | CRUD e pesquisa de agências |
-| `VeiculoSB` | `@Stateless` | CRUD e consultas de veículos |
-| `AcessorioSB` | `@Stateless` | Acessórios dos veículos |
-| `LocacaoSB` | `@Stateless` | Consultas, retirada, devolução e cancelamento |
-| `ConsultaFrotaSB` | `@Stateless` | Consultas em DTO para o desktop |
-| `StatusFrotaSB` | `@Singleton` | Totais da frota (cache) para o dashboard |
-| `AdminPadraoSB` | `@Singleton @Startup` | Cria o administrador padrão na primeira inicialização |
-
 <br>
 
 ## 📦 Pré-requisitos
@@ -82,7 +67,6 @@ CREATE DATABASE "auto-rent";
 ```
 
 > 💡 **Não há scripts de criação de tabelas.** O Hibernate está com `hibernate.hbm2ddl.auto=update`, então as tabelas e sequences (`usuario`, `agencia`, `veiculo`, `acessorio`, `locacao` e a tabela de junção veículo–acessório) são criadas automaticamente no primeiro deploy.
->
 > Se a sua senha do `postgres` for outra, altere `AutoRent/ejbModule/META-INF/persistence.xml`.
 
 ### 2. Driver JDBC do PostgreSQL
@@ -111,19 +95,6 @@ No Eclipse:
 ### 4. Deploy do EAR no WildFly
 
 **Pelo Eclipse:** adicione o `AutoRent-EAR` ao servidor WildFly 27 (*Add and Remove...*) e inicie o servidor.
-
-**Manualmente:**
-
-```bash
-# 1) Exporte: botão direito no AutoRent-EAR → Export → EAR file → AutoRent-EAR.ear
-# 2) Copie para a pasta de deployments
-cp AutoRent-EAR.ear $WILDFLY_HOME/standalone/deployments/
-
-# 3) Inicie o servidor (porta HTTP padrão 8080)
-$WILDFLY_HOME/bin/standalone.sh        # Windows: standalone.bat
-```
-
-Acompanhe o log (`standalone/log/server.log`): o deploy está concluído quando aparecer o EAR como *deployed* e o `AdminPadraoSB` tiver criado o administrador (ver credenciais abaixo).
 
 ### 5. Acessar a aplicação web
 
@@ -176,19 +147,6 @@ Host, porta, nome do EAR e do módulo estão em `AutoRentDesktop/src/br/autorent
 **Pré-requisito:** o EAR precisa estar implantado e o WildFly em execução.
 
 **Pelo Eclipse:** importe `AutoRentDesktop`, confirme que `jar/AutoRentClient.jar` e `jar/jboss-client.jar` estão no *Build Path* e execute *Run As → Java Application* na classe `br.autorent.desktop.AutoRentDesktop`.
-
-**Pela linha de comando:**
-
-```bash
-cd AutoRentDesktop
-mkdir -p out
-javac -encoding UTF-8 -cp "jar/*" -d out $(find src -name "*.java")
-
-# Linux/macOS
-java -cp "out:jar/*" br.autorent.desktop.AutoRentDesktop
-# Windows (use ; no classpath)
-# java -cp "out;jar/*" br.autorent.desktop.AutoRentDesktop
-```
 
 Na tela de login informe `00000000000` / `admin`. Módulos disponíveis: **Clientes**, **Agências**, **Frota** (consulta, situação e cadastro de veículos) e **Locações** (consulta, nova locação, retirada e devolução).
 
