@@ -37,9 +37,9 @@
 						<th>Situação</th>
 						<td>
 							<h:outputText value="Disponível" styleClass="selo ok"
-								rendered="#{veiculoMB.isDisponivel(veiculoMB.veiculoSelecionado)}" />
+								rendered="#{veiculoMB.veiculoSelecionado.status eq 'DISPONIVEL'}" />
 							<h:outputText value="Indisponível" styleClass="selo indisponivel"
-								rendered="#{not veiculoMB.isDisponivel(veiculoMB.veiculoSelecionado)}" />
+								rendered="#{veiculoMB.veiculoSelecionado.status ne 'DISPONIVEL'}" />
 						</td>
 					</tr>
 					<tr><th>Agência</th><td>#{veiculoMB.veiculoSelecionado.agencia.nome}</td></tr>
@@ -65,7 +65,7 @@
 				</h:dataTable>
 			</h:panelGroup>
 	
-			<h:form rendered="#{not empty veiculoMB.veiculoSelecionado and sessaoMB.cliente and veiculoMB.isDisponivel(veiculoMB.veiculoSelecionado)}">
+			<h:form rendered="#{not empty veiculoMB.veiculoSelecionado and sessaoMB.cliente and veiculoMB.veiculoSelecionado.status eq 'DISPONIVEL'}">
 				<h:commandButton value="Reservar este veículo" action="reserva?faces-redirect=true" styleClass="botao" />
 			</h:form>
 	
@@ -75,3 +75,4 @@
 		</ui:define>
 	</ui:composition>
 </html>
+

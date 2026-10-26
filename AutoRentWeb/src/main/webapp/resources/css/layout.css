@@ -1,0 +1,78 @@
+/* layout.css - barra superior, área de conteúdo e responsividade. */
+.topo {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: .75rem;
+	padding: .875rem 1.5rem;
+	background: var(--cor-topo);
+	color: #fff;
+	box-shadow: 0 2px 6px rgba(15, 23, 42, .2);
+}
+
+.topo .marca {
+	margin: 0;
+	font-size: 1.25rem;
+	font-weight: 700;
+	letter-spacing: .02em;
+	color: #fff;
+}
+
+.topo form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .25rem;
+}
+
+.topo a {
+	padding: .4rem .75rem;
+	border-radius: var(--raio-pequeno);
+	font-size: .9375rem;
+	font-weight: 500;
+	color: #e2e8f0;
+	text-decoration: none;
+}
+
+.topo a:hover {
+	background: rgba(255, 255, 255, .14);
+	color: #fff;
+	text-decoration: none;
+}
+
+.conteudo {
+	max-width: 480px;
+	margin: 2.5rem auto;
+	padding: 2rem;
+	background: var(--cor-superficie);
+	border: 1px solid var(--cor-borda);
+	border-radius: var(--raio);
+	box-shadow: var(--sombra);
+}
+
+.conteudo.largo {
+	max-width: 1040px;
+	overflow-x: auto;
+}
+
+.conteudo.largo h3 {
+	margin: 2rem 0 .75rem;
+}
+
+.rodape-form {
+	margin: 1.25rem 0 0;
+	font-size: .9375rem;
+	color: var(--cor-texto-suave);
+}
+
+@media (max-width: 640px) {
+	.topo {
+		padding: .75rem 1rem;
+	}
+
+	.conteudo {
+		margin: 1rem .75rem;
+		padding: 1.25rem;
+	}
+}

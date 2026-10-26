@@ -84,9 +84,10 @@
 	
 					<div class="campo">
 						<h:outputLabel value="Data de retirada" for="dataRetirada" />
-						<h:inputText id="dataRetirada" value="#{reservaMB.dataRetirada}" pt:type="date"
+						<h:inputText id="dataRetirada" value="#{reservaMB.dataRetirada}"
 							required="true" requiredMessage="Informe a data de retirada."
 							converterMessage="Data de retirada inválida.">
+							<f:passThroughAttribute name="type" value="date" />
 							<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
 						</h:inputText>
 						<h:message for="dataRetirada" styleClass="erro-campo" />
@@ -94,9 +95,10 @@
 	
 					<div class="campo">
 						<h:outputLabel value="Data de devolução" for="dataDevolucao" />
-						<h:inputText id="dataDevolucao" value="#{reservaMB.dataDevolucao}" pt:type="date"
+						<h:inputText id="dataDevolucao" value="#{reservaMB.dataDevolucao}"
 							required="true" requiredMessage="Informe a data de devolução."
 							converterMessage="Data de devolução inválida.">
+							<f:passThroughAttribute name="type" value="date" />
 							<f:convertDateTime type="localDate" pattern="yyyy-MM-dd" />
 						</h:inputText>
 						<h:message for="dataDevolucao" styleClass="erro-campo" />

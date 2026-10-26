@@ -13,6 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
+/**
+ * Representa uma agência de retirada e devolução de veículos.
+ */
 @Entity
 public class Agencia implements Serializable {
 	

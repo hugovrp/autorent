@@ -51,8 +51,8 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">Situação</f:facet>
-						<h:outputText value="Devolução atrasada" styleClass="selo atrasada" rendered="#{dashboardClienteMB.isAtrasada(l)}" />
-						<h:outputText value="No prazo" styleClass="selo ativa" rendered="#{not dashboardClienteMB.isAtrasada(l)}" />
+						<h:outputText value="Devolução atrasada" styleClass="selo atrasada" rendered="#{l.dataPrevDevolucao lt dashboardClienteMB.hoje}" />
+						<h:outputText value="No prazo" styleClass="selo ativa" rendered="#{l.dataPrevDevolucao ge dashboardClienteMB.hoje}" />
 					</h:column>
 				</h:dataTable>
 	
@@ -119,3 +119,4 @@
 		</ui:define>
 	</ui:composition>
 </html>
+

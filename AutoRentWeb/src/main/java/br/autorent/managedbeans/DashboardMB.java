@@ -20,8 +20,8 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-/**
- * Dashboard administrativo.
+/** 
+ * Gerencia os dados e as operações do painel administrativo. 
  */
 @Named("dashboardMB")
 @RequestScoped
@@ -35,6 +35,7 @@ public class DashboardMB {
 	private List<Locacao> locacoesAtivas = new ArrayList<>();
 	private List<Veiculo> veiculosAlugados = new ArrayList<>();
 	private List<Agencia> agencias = new ArrayList<>();
+	private java.util.Map<Long, Locacao> locacaoAtivaPorVeiculo; // montado sob demanda
 	private java.util.Map<Long, Long> disponiveisPorAgencia = new java.util.HashMap<>();
 
 	private String mensagemSucesso;
@@ -55,6 +56,9 @@ public class DashboardMB {
 	@EJB
 	private IAgencia iAgencia;
 
+	/** 
+	 * Carrega os indicadores da frota e as locações do painel administrativo. 
+	 */
 	@PostConstruct
 	public void carregar() {
 		if (!sessaoMB.isAdmin()) 
@@ -78,18 +82,39 @@ public class DashboardMB {
 		}
 	}
 
+	/** 
+	 * Registra a retirada do veículo associado à locação.
+	 * 
+	 * @param locacaoId identificador da locação.
+	 */
 	public void registrarRetirada(Long locacaoId) {
 		executar(() -> iLocacao.registrarRetirada(locacaoId), "Retirada registrada com sucesso.");
 	}
 
+	/** 
+	 * Registra a devolução do veículo associado à locação.
+	 * 
+	 * @param locacaoId identificador da locação.
+	 */
 	public void registrarDevolucao(Long locacaoId) {
 		executar(() -> iLocacao.registrarDevolucao(locacaoId), "Devolução registrada com sucesso.");
 	}
 
+	/** 
+	 * Cancela uma reserva existente.
+	 * 
+	 * @param locacaoId identificador da locação a cancelar.
+	 */
 	public void cancelarReserva(Long locacaoId) {
 		executar(() -> iLocacao.cancelar(locacaoId), "Reserva cancelada com sucesso.");
 	}
 
+	/** 
+	 * Executa uma operação administrativa e atualiza as informações do painel.
+	 * 
+	 * @param operacao ação a ser executada.
+	 * @param sucesso mensagem exibida quando a operação é concluída.
+	 */
 	private void executar(Runnable operacao, String sucesso) {
 		mensagemSucesso = null;
 		mensagemErro = null;
@@ -109,6 +134,7 @@ public class DashboardMB {
 		
 		reservas = new ArrayList<>();
 		locacoesAtivas = new ArrayList<>();
+		locacaoAtivaPorVeiculo = null;
 		String erroOperacao = mensagemErro;
 		carregar();
 		
@@ -116,6 +142,12 @@ public class DashboardMB {
 			mensagemErro = erroOperacao;
 	}
 
+	/** 
+	 * Obtém uma mensagem adequada para apresentar em caso de falha.
+	 * 
+	 * @param erro exceção ocorrida durante a operação.
+	 * @return mensagem de erro compreensível para o usuário.
+	 */
 	private String mensagem(Throwable erro) {
 		for (Throwable t = erro; t != null; t = t.getCause()) {
 			if ((t instanceof IllegalArgumentException || t instanceof IllegalStateException) && t.getMessage() != null) {
@@ -125,7 +157,12 @@ public class DashboardMB {
 		return "Não foi possível concluir a operação no momento. Tente novamente em instantes.";
 	}
 
-	/** Reúne as locações do status informado de todas as categorias, da retirada mais próxima à mais distante. */
+	/** 
+	 * Busca e ordena as locações de todas as categorias com o status informado.
+	 * 
+	 * @param status situação das locações desejadas.
+	 * @return lista de locações ordenada pela data de retirada.
+	 */
 	private List<Locacao> buscar(StatusLocacao status) {
 		List<Locacao> lista = new ArrayList<>();
 		for (CategoriaVeiculo categoria : CategoriaVeiculo.values()) {
@@ -134,24 +171,30 @@ public class DashboardMB {
 		lista.sort(Comparator.comparing(Locacao::getDataRetirada));
 		return lista;
 	}
-
-	/** Locação ativa do veículo alugado (para mostrar cliente e data de devolução), ou null. */
-	public Locacao locacaoAtivaDo(Veiculo veiculo) {
-		for (Locacao l : locacoesAtivas) {
-			if (l.getVeiculo().getId().equals(veiculo.getId())) {
-				return l;
+	
+	public java.util.Map<Long, Locacao> getLocacaoAtivaPorVeiculo() {
+		if (locacaoAtivaPorVeiculo == null) {
+			locacaoAtivaPorVeiculo = new java.util.HashMap<>();
+			for (Locacao l : locacoesAtivas) {
+				locacaoAtivaPorVeiculo.put(l.getVeiculo().getId(), l);
 			}
 		}
-		return null;
+		return locacaoAtivaPorVeiculo;
 	}
 
+	/** 
+	 * Retorna a quantidade de veículos disponíveis em uma agência.
+	 * 
+	 * @param agencia agência consultada.
+	 * @return quantidade de veículos disponíveis, ou zero se não houver registro.
+	 */
 	public long disponiveisDa(Agencia agencia) {
 		Long total = disponiveisPorAgencia.get(agencia.getId());
 		return total == null ? 0 : total;
 	}
 
-	public boolean isAtrasada(Locacao locacao) {
-		return locacao.getDataPrevDevolucao().isBefore(LocalDate.now());
+	public LocalDate getHoje() {
+		return LocalDate.now();
 	}
 
 	public long getTotalVeiculos() {

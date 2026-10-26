@@ -1,0 +1,94 @@
+/* components.css - alertas, selos de situação, cartões de resumo. */
+.alerta {
+	margin-bottom: 1rem;
+	padding: .75rem 1rem;
+	font-size: .9375rem;
+	border: 1px solid;
+	border-left-width: 4px;
+	border-radius: var(--raio-pequeno);
+}
+
+.alerta.sucesso {
+	color: var(--cor-sucesso);
+	background: #ecfdf3;
+	border-color: #86d7a4;
+}
+
+.alerta.erro {
+	color: var(--cor-erro);
+	background: #fef2f2;
+	border-color: #f0a8a8;
+}
+
+.selo {
+	display: inline-block;
+	padding: .125rem .65rem;
+	font-size: .75rem;
+	font-weight: 600;
+	line-height: 1.5;
+	white-space: nowrap;
+	border-radius: 999px;
+}
+
+.selo.ok,
+.selo.ativa {
+	color: var(--cor-sucesso);
+	background: #dcfce7;
+}
+
+.selo.indisponivel,
+.selo.cancelada {
+	color: var(--cor-erro);
+	background: #fee2e2;
+}
+
+.selo.reservada {
+	color: #1e40af;
+	background: #dbeafe;
+}
+
+.selo.finalizada {
+	color: #374151;
+	background: #e5e7eb;
+}
+
+.selo.atrasada {
+	color: #92400e;
+	background: #fef3c7;
+}
+
+.resumo {
+	margin-bottom: 1.25rem;
+	padding: .875rem 1rem;
+	background: var(--cor-superficie-suave);
+	border: 1px solid var(--cor-borda);
+	border-left: 4px solid var(--cor-primaria);
+	border-radius: var(--raio-pequeno);
+}
+
+.cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 1rem;
+	margin-bottom: .5rem;
+}
+
+.card {
+	padding: 1rem 1.125rem;
+	background: var(--cor-superficie-suave);
+	border: 1px solid var(--cor-borda);
+	border-radius: var(--raio);
+}
+
+.card .numero {
+	display: block;
+	font-size: 1.875rem;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--cor-primaria);
+}
+
+.card .rotulo {
+	font-size: .875rem;
+	color: var(--cor-texto-suave);
+}

@@ -19,7 +19,7 @@
 						<h:selectOneMenu id="status" value="#{minhasReservasMB.status}">
 							<f:selectItem itemLabel="Todos" noSelectionOption="true" />
 							<f:selectItems value="#{minhasReservasMB.statusDisponiveis}" var="s" itemValue="#{s}"
-								itemLabel="#{minhasReservasMB.rotulo(s)}" />
+								itemLabel="#{minhasReservasMB.rotulos[s]}" />
 						</h:selectOneMenu>
 					</div>
 					<h:commandButton value="Filtrar" styleClass="botao" />
@@ -69,7 +69,7 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">Status</f:facet>
-						<h:outputText value="#{minhasReservasMB.rotulo(l.status)}"
+						<h:outputText value="#{minhasReservasMB.rotulos[l.status]}"
 							styleClass="selo #{l.status eq 'RESERVADA' ? 'reservada' : (l.status eq 'ATIVA' ? 'ativa' : (l.status eq 'FINALIZADA' ? 'finalizada' : 'cancelada'))}" />
 					</h:column>
 				</h:dataTable>
@@ -81,3 +81,4 @@
 		</ui:define>
 	</ui:composition>
 </html>
+

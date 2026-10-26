@@ -17,15 +17,15 @@ import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 
-/**
- * Consulta de veículos da área do cliente.
+/** 
+ * Consulta veículos e gerencia a seleção para visualização e reserva. 
  */
 @Named("veiculoMB")
 @SessionScoped
 public class VeiculoMB implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	// filtros (null = todos)
+	// Filtros opcionais; valores nulos representam todos os valores.
 	private CategoriaVeiculo categoria;
 	private Long agenciaId;
 	private StatusVeiculo disponibilidade = StatusVeiculo.DISPONIVEL;
@@ -46,6 +46,9 @@ public class VeiculoMB implements Serializable {
 	@EJB
 	private IAcessorio iAcessorio;
 
+	/** 
+	 * Consulta veículos aplicando os filtros selecionados. 
+	 */
 	public void pesquisar() {
 		mensagemErro = null;
 		veiculos = new ArrayList<>();
@@ -84,6 +87,9 @@ public class VeiculoMB implements Serializable {
 		}
 	}
 
+	/** 
+	 * Restaura os filtros para os valores padrão e refaz a pesquisa. 
+	 */
 	public void limpar() {
 		categoria = null;
 		agenciaId = null;
@@ -91,6 +97,12 @@ public class VeiculoMB implements Serializable {
 		pesquisar();
 	}
 
+	/** 
+	 * Seleciona um veículo e carrega seus acessórios para exibição.
+	 * 
+	 * @param veiculo veículo que será detalhado.
+	 * @return caminho da página de detalhes do veículo.
+	 */
 	public String detalhar(Veiculo veiculo) {
 		mensagemErro = null;
 		veiculoSelecionado = veiculo;
@@ -105,6 +117,12 @@ public class VeiculoMB implements Serializable {
 		return "veiculo?faces-redirect=true";
 	}
 
+	/** 
+	 * Seleciona o veículo para iniciar o processo de reserva.
+	 * 
+	 * @param veiculo veículo escolhido pelo cliente.
+	 * @return caminho da página de reserva.
+	 */
 	public String reservar(Veiculo veiculo) {
 		mensagemErro = null;
 		veiculoSelecionado = veiculo;
@@ -113,10 +131,6 @@ public class VeiculoMB implements Serializable {
 
 	public CategoriaVeiculo[] getCategorias() {
 		return CategoriaVeiculo.values();
-	}
-
-	public boolean isDisponivel(Veiculo veiculo) {
-		return veiculo.getStatus() == StatusVeiculo.DISPONIVEL;
 	}
 
 	public CategoriaVeiculo getCategoria() {

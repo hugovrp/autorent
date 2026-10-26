@@ -4,6 +4,9 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+/** 
+ * Controla o formulário de autenticação de usuários. 
+ */
 @Named("loginMB")
 @RequestScoped
 public class LoginMB {
@@ -14,6 +17,11 @@ public class LoginMB {
 	@Inject
 	private SessaoMB sessaoMB;
 
+	/** 
+	 * Autentica o usuário e encaminha para o painel correspondente ao seu perfil.
+	 * 
+	 * @return caminho de navegação após o login, ou {@code null} se houver falha.
+	 */
 	public String entrar() {
 		try {
 			if (sessaoMB.login(cpf, senha)) {

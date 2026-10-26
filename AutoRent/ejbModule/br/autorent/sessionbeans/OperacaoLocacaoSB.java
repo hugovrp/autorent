@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import br.autorent.dto.LocacaoDTO;
 import br.autorent.modelo.Agencia;
 import br.autorent.modelo.Locacao;
 import br.autorent.modelo.Usuario;
@@ -12,9 +13,13 @@ import br.autorent.modelo.enums.StatusLocacao;
 import br.autorent.modelo.enums.StatusVeiculo;
 import br.autorent.modelo.enums.TipoUsuario;
 import jakarta.ejb.Remote;
+import jakarta.ejb.Remove;
 import jakarta.ejb.Stateful;
 import jakarta.persistence.EntityManager;
 
+/**
+ * Coordena as etapas necessárias para realizar uma reserva ou locação.
+ */
 @Stateful
 @Remote(IOperacaoLocacao.class)
 public class OperacaoLocacaoSB implements IOperacaoLocacao {
@@ -24,7 +29,14 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
     private Veiculo veiculoSelecionado;
     private LocalDate dataRetirada;
     private LocalDate dataDevolucao;
-
+    
+    /**
+     * Autentica o usuário com as credenciais informadas.
+     * 
+     * @param cpf parâmetro utilizado na operação.
+     * @param senha parâmetro utilizado na operação.
+     * @return resultado da operação.
+     */
     @Override
     public boolean login(String cpf, String senha) {
         clienteLogado = null;
@@ -41,7 +53,7 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
             	return false;
             
             Usuario usuario = usuarios.get(0);
-            if (usuario.getTipo() != TipoUsuario.CLIENTE || usuario.getSenhaHash() == null || !usuario.getSenhaHash().equals(senha)) 
+            if (usuario.getTipo() != TipoUsuario.CLIENTE || !SenhaUtil.conferirEMigrar(em, usuario, senha)) 
             	return false;
             
             clienteLogado = usuario;
@@ -51,26 +63,47 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         	em.close(); 
         }
     }
-
+    
+    /**
+     * Obtém as informações solicitadas.
+     * 
+     * @return resultado da operação.
+     */
     @Override 
     public Usuario obterClienteLogado() { 
     	return clienteLogado; 
     }
-
+    
+    /**
+     * Define a opção selecionada para a operação atual.
+     * 
+     * @param agenciaId parâmetro utilizado na operação.
+     */
     @Override 
     public void selecionarAgenciaRetirada(Long agenciaId) { 
-    	agenciaRetirada = findAgency(agenciaId); 
+    	agenciaRetirada = procuraAgencia(agenciaId); 
     }
     
+    /**
+     * Define a opção selecionada para a operação atual.
+     * 
+     * @param agenciaId parâmetro utilizado na operação.
+     */
     @Override 
     public void selecionarAgenciaDevolucao(Long agenciaId) { 
-    	agenciaDevolucao = findAgency(agenciaId); 
+    	agenciaDevolucao = procuraAgencia(agenciaId); 
     }
     
     @Override public void selecionarVeiculo(Long veiculoId) { 
     	veiculoSelecionado = buscarVeiculo(veiculoId); 
     }
-
+    
+    /**
+     * Define os dados necessários para a operação.
+     * 
+     * @param retirada parâmetro utilizado na operação.
+     * @param devolucao parâmetro utilizado na operação.
+     */
     @Override
     public void definirPeriodoLocacao(LocalDate retirada, LocalDate devolucao) {
         if (retirada == null || devolucao == null || devolucao.isBefore(retirada) || devolucao.equals(retirada))
@@ -82,14 +115,24 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         dataRetirada = retirada;
         dataDevolucao = devolucao;
     }
-
+    
+    /**
+     * Calcula o valor com base nos dados informados.
+     * 
+     * @return resultado da operação.
+     */
     @Override
     public double calcularValorTotal() {
     	validarDados();
         long diarias = ChronoUnit.DAYS.between(dataRetirada, dataDevolucao);
         return diarias * veiculoSelecionado.getValorDiaria();
     }
-
+    
+    /**
+     * Valida e confirma a operação solicitada.
+     * 
+     * @return resultado da operação.
+     */
     @Override
     public Locacao confirmarLocacao() {
     	validarDados();
@@ -126,7 +169,6 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
             locacao.setDataRetirada(dataRetirada);
             locacao.setDataPrevDevolucao(dataDevolucao);
             
-            // Ainda não houve devolução
             locacao.setDataDevolucao(null);
             locacao.setStatus(StatusLocacao.RESERVADA);
             locacao.setValorTotal(calcularValorTotal());
@@ -142,32 +184,134 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         }
     }
 
+    @Override
+    public double prepararLocacaoAtendimento(Long clienteId, Long agenciaRetiradaId, Long agenciaDevolucaoId, Long veiculoId, LocalDate retirada, LocalDate devolucao) throws Exception {
+        try {
+            clienteLogado = buscarClienteParaAtendimento(clienteId);
+            selecionarAgenciaRetirada(agenciaRetiradaId);
+            selecionarAgenciaDevolucao(agenciaDevolucaoId);
+            selecionarVeiculo(veiculoId);
+            definirPeriodoLocacao(retirada, devolucao);
+            return calcularValorTotal();
+        }
+        catch (IllegalArgumentException | IllegalStateException e) {
+            clienteLogado = null;
+            limparOperacao();
+            throw new Exception(e.getMessage());
+        }
+    }
+    
+    /**
+     * Valida e confirma a operação solicitada.
+     * 
+     * @return resultado da operação.
+     */
+    @Override
+    public LocacaoDTO confirmarLocacaoAtendimento() throws Exception {
+        try {
+            Locacao l = confirmarLocacao();
+            return new LocacaoDTO(l.getId(), l.getCliente().getNome(), l.getCliente().getCpf(), l.getVeiculo().getMarca(),
+                    l.getVeiculo().getModelo(), l.getVeiculo().getPlaca(), l.getAgenciaRetirada().getNome(),
+                    l.getAgenciaDevolucao().getNome(), l.getDataRetirada(), l.getDataPrevDevolucao(), l.getDataDevolucao(),
+                    l.getValorTotal(), l.getStatus(), false);
+        }
+        catch (IllegalArgumentException | IllegalStateException e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+    
+    /**
+     * Executa a operação correspondente aos dados informados.
+     */
+    @Override
+    @Remove
+    public void encerrar() {
+        clienteLogado = null;
+        limparOperacao();
+    }
+    
+    /**
+     * Obtém as informações solicitadas.
+     * 
+     * @return resultado da operação.
+     */
     @Override 
     public Agencia obterAgenciaRetirada() { 
     	return agenciaRetirada; 
     }
     
+    /**
+     * Obtém as informações solicitadas.
+     * 
+     * @return resultado da operação.
+     */
     @Override 
     public Agencia obterAgenciaDevolucao() { 
     	return agenciaDevolucao; 
     }
     
+    /**
+     * Obtém as informações solicitadas.
+     * 
+     * @return resultado da operação.
+     */
     @Override 
     public Veiculo obterVeiculoSelecionado() { 
     	return veiculoSelecionado; 
     }
     
+    /**
+     * Obtém as informações solicitadas.
+     * 
+     * @return resultado da operação.
+     */
     @Override 
     public LocalDate obterDataRetirada() { 
     	return dataRetirada; 
     }
     
+    /**
+     * Obtém as informações solicitadas.
+     * 
+     * @return resultado da operação.
+     */
     @Override 
     public LocalDate obterDataDevolucao() { 
     	return dataDevolucao; 
     }
+    
+    /**
+     * Busca registros que correspondam aos critérios informados.
+     * 
+     * @param id parâmetro utilizado na operação.
+     * @return resultado da operação.
+     */
+    private Usuario buscarClienteParaAtendimento(Long id) {
+        if (id == null)
+        	throw new IllegalArgumentException("Selecione o cliente.");
 
-    private Agencia findAgency(Long id) {
+        EntityManager em = JPAUtil.createEntityManager();
+
+        try {
+            Usuario cliente = em.find(Usuario.class, id);
+
+            if (cliente == null || cliente.getTipo() != TipoUsuario.CLIENTE)
+            	throw new IllegalArgumentException("Cliente não encontrado.");
+
+            return cliente;
+        }
+        finally {
+        	em.close();
+        }
+    }
+    
+    /**
+     * Executa a operação correspondente aos dados informados.
+     * 
+     * @param id parâmetro utilizado na operação.
+     * @return resultado da operação.
+     */
+    private Agencia procuraAgencia(Long id) {
         if (id == null) 
         	throw new IllegalArgumentException("Informe uma agência.");
         
@@ -185,7 +329,13 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         	em.close(); 
         }
     }
-
+    
+    /**
+     * Busca registros que correspondam aos critérios informados.
+     * 
+     * @param id parâmetro utilizado na operação.
+     * @return resultado da operação.
+     */
     private Veiculo buscarVeiculo(Long id) {
         if (id == null) 
         	throw new IllegalArgumentException("Informe um veículo.");
@@ -207,7 +357,10 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         	em.close(); 
         }
     }
-
+    
+    /**
+     * Valida os dados informados.
+     */
     private void validarDados() {
         if (clienteLogado == null) 
         	throw new IllegalStateException("Faça login antes de realizar a locação.");
@@ -218,7 +371,10 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         if (veiculoSelecionado.getValorDiaria() == null || veiculoSelecionado.getValorDiaria() < 0)
             throw new IllegalStateException("O valor da diária do veículo é inválido.");
     }
-
+    
+    /**
+     * Limpa os dados da operação atual.
+     */
     private void limparOperacao() {
         agenciaRetirada = null;
         agenciaDevolucao = null;
@@ -227,4 +383,3 @@ public class OperacaoLocacaoSB implements IOperacaoLocacao {
         dataDevolucao = null;
     }
 }
-

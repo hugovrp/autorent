@@ -16,6 +16,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
+/**
+ * Representa uma reserva ou locação de um veículo por um cliente.
+ */
 @Entity
 public class Locacao implements Serializable {
 

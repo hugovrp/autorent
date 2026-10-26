@@ -11,8 +11,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
-/**
- * Guarda o usuário autenticado durante toda a sessão HTTP.
+/** 
+ * Mantém os dados do usuário autenticado durante a sessão HTTP. 
  */
 @Named("sessaoMB")
 @SessionScoped
@@ -29,6 +29,13 @@ public class SessaoMB implements Serializable {
 
 	private Usuario usuario;
 
+	/** 
+	 * Autentica o usuário e registra seus dados na sessão HTTP.
+	 * 
+	 * @param cpf CPF informado para autenticação.
+	 * @param senha senha informada para autenticação.
+	 * @return {@code true} se a autenticação for bem-sucedida; caso contrário, {@code false}.
+	 */
 	public boolean login(String cpf, String senha) {
 		if (!iUsuario.login(cpf, senha)) {
 			usuario = null;
@@ -42,6 +49,11 @@ public class SessaoMB implements Serializable {
 		return true;
 	}
 
+	/** 
+	 * Encerra a autenticação e invalida a sessão HTTP atual.
+	 * 
+	 * @return caminho da página de login.
+	 */
 	public String logout() {
 		iUsuario.logout();
 		usuario = null;
@@ -49,16 +61,17 @@ public class SessaoMB implements Serializable {
 		return "/login?faces-redirect=true";
 	}
 
+	/** 
+	 * Informa se existe um usuário autenticado na sessão. 
+	 */
 	public boolean isLogado() {
 		return usuario != null;
 	}
-
-	/** Perfil administrador = funcionário da locadora. */
+	
 	public boolean isAdmin() {
 		return usuario != null && usuario.getTipo() == TipoUsuario.FUNCIONARIO;
 	}
-
-	/** Perfil usuário comum = cliente. */
+	
 	public boolean isCliente() {
 		return usuario != null && usuario.getTipo() == TipoUsuario.CLIENTE;
 	}
@@ -67,3 +80,4 @@ public class SessaoMB implements Serializable {
 		return usuario;
 	}
 }
+

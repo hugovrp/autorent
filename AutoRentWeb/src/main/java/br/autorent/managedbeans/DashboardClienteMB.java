@@ -14,8 +14,8 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-/**
- * Dashboard do cliente autenticado. O id do cliente vem sempre da sessão (SessaoMB).
+/** 
+ * Disponibiliza os dados do painel do cliente autenticado. 
  */
 @Named("dashboardClienteMB")
 @RequestScoped
@@ -32,6 +32,9 @@ public class DashboardClienteMB {
 	@Inject
 	private SessaoMB sessaoMB;
 
+	/** 
+	 * Carrega as reservas, locações e totais do cliente autenticado. 
+	 */
 	@PostConstruct
 	public void carregar() {
 		if (!sessaoMB.isCliente()) 
@@ -61,13 +64,12 @@ public class DashboardClienteMB {
 		}
 	}
 
-	/** Reserva com a retirada mais próxima (a lista já está ordenada), ou null. */
 	public Locacao getProximaReserva() {
 		return reservas.isEmpty() ? null : reservas.get(0);
 	}
 
-	public boolean isAtrasada(Locacao locacao) {
-		return locacao.getDataPrevDevolucao().isBefore(LocalDate.now());
+	public LocalDate getHoje() {
+		return LocalDate.now();
 	}
 
 	public int getTotalReservas() {

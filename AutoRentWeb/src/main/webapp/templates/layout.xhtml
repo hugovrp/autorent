@@ -8,7 +8,12 @@
 	<h:head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>AutoRent - <ui:insert name="titulo">Locadora de Veículos</ui:insert></title>
-		<h:outputStylesheet library="css" name="style.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<h:outputStylesheet library="css" name="base.css" />
+		<h:outputStylesheet library="css" name="layout.css" />
+		<h:outputStylesheet library="css" name="forms.css" />
+		<h:outputStylesheet library="css" name="components.css" />
+		<h:outputStylesheet library="css" name="tabelas.css" />
 	</h:head>
 	
 	<h:body>
@@ -23,7 +28,7 @@
 				<h:link outcome="/minhasReservas" value="Minhas reservas" rendered="#{sessaoMB.cliente}" />
 				<h:link outcome="/login" value="Entrar" rendered="#{not sessaoMB.logado}" />
 				<h:link outcome="/cadastro" value="Cadastrar-se" rendered="#{not sessaoMB.logado}" />
-				<h:commandLink action="#{sessaoMB.logout}" value="Sair" rendered="#{sessaoMB.logado}" style="color:#fff; margin-left:16px;" />
+				<h:commandLink action="#{sessaoMB.logout}" value="Sair" rendered="#{sessaoMB.logado}" />
 			</h:form>
 		</div>
 	

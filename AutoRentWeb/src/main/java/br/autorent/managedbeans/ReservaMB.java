@@ -15,8 +15,8 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-/**
- * Realização da reserva/locação.
+/** 
+ * Gerencia o processo de criação de reservas de veículos. 
  */
 @Named("reservaMB")
 @RequestScoped
@@ -44,6 +44,9 @@ public class ReservaMB {
 	@Inject
 	private VeiculoMB veiculoMB;
 
+	/** 
+	 * Carrega as agências e define valores iniciais para a reserva. 
+	 */
 	@PostConstruct
 	public void iniciar() {
 		try {
@@ -52,7 +55,7 @@ public class ReservaMB {
 			mensagemErro = "Não foi possível carregar as agências no momento.";
 		}
 
-		// sugestão inicial: retirar e devolver na agência do veículo (o cliente pode trocar)
+		// Usa inicialmente a agência do veículo, permitindo alteração pelo cliente.
 		Veiculo veiculo = veiculoMB.getVeiculoSelecionado();
 		if (veiculo != null && veiculo.getAgencia() != null) {
 			agenciaRetiradaId = veiculo.getAgencia().getId();
@@ -60,6 +63,11 @@ public class ReservaMB {
 		}
 	}
 
+	/** 
+	 * Valida os dados e solicita a criação da reserva ao serviço de locação.
+	 * 
+	 * @return caminho de navegação após a operação, ou {@code null} em caso de falha.
+	 */
 	public String reservar() {
 		mensagemSucesso = null;
 		mensagemErro = null;
@@ -96,6 +104,12 @@ public class ReservaMB {
 		return null;
 	}
 
+	/** 
+	 * Extrai uma mensagem de validação ou retorna uma mensagem genérica.
+	 * 
+	 * @param erro exceção ocorrida durante a reserva.
+	 * @return mensagem adequada para exibição ao usuário.
+	 */
 	private String mensagem(Throwable erro) {
 		for (Throwable t = erro; t != null; t = t.getCause()) {
 			if ((t instanceof IllegalArgumentException || t instanceof IllegalStateException) && t.getMessage() != null) {
@@ -161,3 +175,4 @@ public class ReservaMB {
 		return mensagemErro;
 	}
 }
+

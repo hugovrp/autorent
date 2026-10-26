@@ -104,8 +104,8 @@
 				</h:column>
 				<h:column>
 					<f:facet name="header">Situação</f:facet>
-					<h:outputText value="Atrasada" styleClass="selo atrasada" rendered="#{dashboardMB.isAtrasada(l)}" />
-					<h:outputText value="No prazo" styleClass="selo ativa" rendered="#{not dashboardMB.isAtrasada(l)}" />
+					<h:outputText value="Atrasada" styleClass="selo atrasada" rendered="#{l.dataPrevDevolucao lt dashboardMB.hoje}" />
+					<h:outputText value="No prazo" styleClass="selo ativa" rendered="#{l.dataPrevDevolucao ge dashboardMB.hoje}" />
 				</h:column>
 				<h:column>
 					<f:facet name="header">Ações</f:facet>
@@ -130,25 +130,25 @@
 				</h:column>
 				<h:column>
 					<f:facet name="header">Cliente</f:facet>
-					<h:outputText value="#{dashboardMB.locacaoAtivaDo(v).cliente.nome}"
-						rendered="#{not empty dashboardMB.locacaoAtivaDo(v)}" />
-					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaDo(v)}" />
+					<h:outputText value="#{dashboardMB.locacaoAtivaPorVeiculo[v.id].cliente.nome}"
+						rendered="#{not empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
+					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
 				</h:column>
 				<h:column>
 					<f:facet name="header">Retirada</f:facet>
-					<h:outputText value="#{dashboardMB.locacaoAtivaDo(v).dataRetirada}"
-						rendered="#{not empty dashboardMB.locacaoAtivaDo(v)}">
+					<h:outputText value="#{dashboardMB.locacaoAtivaPorVeiculo[v.id].dataRetirada}"
+						rendered="#{not empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}">
 						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
 					</h:outputText>
-					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaDo(v)}" />
+					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
 				</h:column>
 				<h:column>
 					<f:facet name="header">Devolução prevista</f:facet>
-					<h:outputText value="#{dashboardMB.locacaoAtivaDo(v).dataPrevDevolucao}"
-						rendered="#{not empty dashboardMB.locacaoAtivaDo(v)}">
+					<h:outputText value="#{dashboardMB.locacaoAtivaPorVeiculo[v.id].dataPrevDevolucao}"
+						rendered="#{not empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}">
 						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
 					</h:outputText>
-					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaDo(v)}" />
+					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
 				</h:column>
 			</h:dataTable>
 	

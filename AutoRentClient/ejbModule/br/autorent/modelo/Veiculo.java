@@ -23,6 +23,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
+/**
+ * Representa um veículo cadastrado na frota para locação.
+ */
 @Entity
 public class Veiculo implements Serializable {
 

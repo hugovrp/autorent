@@ -1,0 +1,53 @@
+/* tabelas.css - listagens (.tabela) e quadro de detalhes (.detalhes). */
+.tabela {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: .9375rem;
+}
+
+.tabela th,
+.tabela td {
+	padding: .75rem;
+	text-align: left;
+	vertical-align: middle;
+	border-bottom: 1px solid var(--cor-borda);
+}
+
+.tabela th {
+	font-size: .75rem;
+	font-weight: 700;
+	letter-spacing: .04em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: #475467;
+	background: var(--cor-cabecalho-tabela);
+}
+
+.tabela tbody tr:hover {
+	background: var(--cor-superficie-suave);
+}
+
+.tabela small {
+	color: var(--cor-texto-suave);
+}
+
+.detalhes {
+	width: 100%;
+	margin-bottom: 1.25rem;
+	border-collapse: collapse;
+}
+
+.detalhes th,
+.detalhes td {
+	padding: .65rem .75rem;
+	border-bottom: 1px solid var(--cor-borda);
+}
+
+.detalhes th {
+	width: 38%;
+	font-size: .875rem;
+	font-weight: 600;
+	text-align: left;
+	color: #475467;
+	background: var(--cor-cabecalho-tabela);
+}

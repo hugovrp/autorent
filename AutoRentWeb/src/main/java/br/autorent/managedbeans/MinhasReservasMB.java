@@ -1,7 +1,9 @@
 package br.autorent.managedbeans;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import br.autorent.modelo.Locacao;
 import br.autorent.modelo.enums.StatusLocacao;
@@ -11,13 +13,13 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-/**
- * Reservas/locações do cliente autenticado. O id do cliente vem sempre da sessão (SessaoMB).
+/** 
+ * Consulta e filtra as reservas e locações do cliente autenticado. 
  */
 @Named("minhasReservasMB")
 @RequestScoped
 public class MinhasReservasMB {
-	private StatusLocacao status; // filtro opcional (null = todos)
+	private StatusLocacao status;
 	private List<Locacao> locacoes;
 	private String mensagemErro;
 
@@ -27,7 +29,6 @@ public class MinhasReservasMB {
 	@Inject
 	private SessaoMB sessaoMB;
 
-	/** Carrega na primeira leitura da requisição, já com o filtro de status aplicado. */
 	public List<Locacao> getLocacoes() {
 		if (locacoes == null) {
 			locacoes = new ArrayList<>();
@@ -51,24 +52,16 @@ public class MinhasReservasMB {
 	public StatusLocacao[] getStatusDisponiveis() {
 		return StatusLocacao.values();
 	}
-
-	public String rotulo(StatusLocacao s) {
-		switch (s) {
-			case RESERVADA: 
-				return "Reservada";
-				
-			case ATIVA: 
-				return "Ativa";
-				
-			case FINALIZADA: 
-				return "Finalizada";
-				
-			case CANCELADA: 
-				return "Cancelada";
-				
-			default: 
-				return s.name();
-		}
+	
+	public Map<StatusLocacao, String> getRotulos() {
+		Map<StatusLocacao, String> rotulos = new EnumMap<>(StatusLocacao.class);
+		
+		rotulos.put(StatusLocacao.RESERVADA, "Reservada");
+		rotulos.put(StatusLocacao.ATIVA, "Ativa");
+		rotulos.put(StatusLocacao.FINALIZADA, "Finalizada");
+		rotulos.put(StatusLocacao.CANCELADA, "Cancelada");
+		
+		return rotulos;
 	}
 
 	public StatusLocacao getStatus() {
@@ -77,6 +70,8 @@ public class MinhasReservasMB {
 
 	public void setStatus(StatusLocacao status) {
 		this.status = status;
+		this.locacoes = null; 
+		this.mensagemErro = null;
 	}
 
 	public String getMensagemErro() {

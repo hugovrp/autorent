@@ -6,6 +6,9 @@ import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 
+/** 
+ * Gerencia o cadastro de novos clientes na aplicação web. 
+ */
 @Named("cadastroMB")
 @RequestScoped
 public class CadastroMB {
@@ -19,6 +22,11 @@ public class CadastroMB {
 	@EJB
 	private ICliente iCliente;
 
+	/** 
+	 * Realiza o cadastro do cliente após validar os dados informados.
+	 * 
+	 * @return resultado de navegação do JSF, ou {@code null} para permanecer na página.
+	 */
 	public String cadastrar() {
 		mensagemSucesso = null;
 		mensagemErro = null;
