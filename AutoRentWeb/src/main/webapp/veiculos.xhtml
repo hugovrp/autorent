@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
 	<ui:composition template="/templates/layout.xhtml">
 		<ui:param name="largo" value="true" />
@@ -77,11 +78,14 @@
 					</h:column>
 					<h:column>
 						<f:facet name="header">Situação</f:facet>
-						<h:outputText value="Disponível" styleClass="selo ok" rendered="#{veiculoMB.isDisponivel(v)}" />
-						<h:outputText value="Indisponível" styleClass="selo indisponivel" rendered="#{not veiculoMB.isDisponivel(v)}" />
+						<h:outputText value="Disponível" styleClass="selo ok" rendered="#{v.status eq 'DISPONIVEL'}" />
+						<h:outputText value="Indisponível" styleClass="selo indisponivel" rendered="#{v.status ne 'DISPONIVEL'}" />
 					</h:column>
 					<h:column>
 						<h:commandLink value="Ver detalhes" action="#{veiculoMB.detalhar(v)}" />
+						<h:panelGroup rendered="#{sessaoMB.cliente and v.status eq 'DISPONIVEL'}">
+							 | <h:commandLink value="Reservar" action="#{veiculoMB.reservar(v)}" />
+						</h:panelGroup>
 					</h:column>
 				</h:dataTable>
 			</h:form>

@@ -6,6 +6,9 @@ import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 
+/** 
+ * Gerencia o cadastro de novos clientes na aplicação web. 
+ */
 @Named("cadastroMB")
 @RequestScoped
 public class CadastroMB {
@@ -19,11 +22,10 @@ public class CadastroMB {
 	@EJB
 	private ICliente iCliente;
 
-	/**
-	 * As validações de formato (obrigatório, tamanho, CPF, e-mail) ficam no
-	 * cadastro.xhtml; aqui ficam apenas as que dependem de mais de um campo
-	 * ou de consulta ao backend (confirmação de senha, CPF/e-mail já usados).
-	 * O tipo do usuário (CLIENTE) é definido pelo próprio EJB.
+	/** 
+	 * Realiza o cadastro do cliente após validar os dados informados.
+	 * 
+	 * @return resultado de navegação do JSF, ou {@code null} para permanecer na página.
 	 */
 	public String cadastrar() {
 		mensagemSucesso = null;
@@ -50,18 +52,20 @@ public class CadastroMB {
 			cliente.setNome(cliente.getNome().trim());
 			cliente.setCpf(cpf);
 			cliente.setEmail(email);
-			// o backend (UsuarioSB.login) compara a senha informada diretamente com este campo
 			cliente.setSenhaHash(senha);
 
 			iCliente.criar(cliente);
 
 			mensagemSucesso = "Cadastro realizado com sucesso! Você já pode entrar no sistema.";
 			cliente = new Usuario();
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			mensagemErro = "Não foi possível concluir o cadastro. Verifique os dados e tente novamente.";
 		}
+		
 		senha = null;
 		confirmarSenha = null;
+		
 		return null;
 	}
 

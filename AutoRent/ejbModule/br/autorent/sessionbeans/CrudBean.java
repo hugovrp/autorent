@@ -5,6 +5,9 @@ import java.util.List;
 
 import jakarta.persistence.EntityManager;
 
+/**
+ * Fornece operações genéricas de persistência para entidades.
+ */
 abstract class CrudBean<T, ID extends Serializable> {
 	private final Class<T> entityClass;
 	
@@ -12,6 +15,12 @@ abstract class CrudBean<T, ID extends Serializable> {
 		this.entityClass = entityCLass;
 	}
 	
+	/**
+	 * Cria e persiste um novo registro.
+	 * 
+	 * @param entidade parâmetro utilizado na operação.
+	 * @return resultado da operação.
+	 */
 	public T criar(T entidade) {
         if (entidade == null) 
         	throw new IllegalArgumentException("A entidade não pode ser nula.");
@@ -29,7 +38,13 @@ abstract class CrudBean<T, ID extends Serializable> {
         	em.close();
         }
     }
-
+	
+    /**
+     * Atualiza os dados de um registro existente.
+     * 
+     * @param entidade parâmetro utilizado na operação.
+     * @return resultado da operação.
+     */
     public T atualizar(T entidade) {
         if (entidade == null) 
         	throw new IllegalArgumentException("A entidade não pode ser nula.");
@@ -47,7 +62,12 @@ abstract class CrudBean<T, ID extends Serializable> {
         	em.close();
         }
     }
-
+    
+    /**
+     * Remove o registro informado.
+     * 
+     * @param id parâmetro utilizado na operação.
+     */
     public void excluir(ID id) {
         if (id == null) 
         	throw new IllegalArgumentException("O identificador não pode ser nulo.");
@@ -67,7 +87,13 @@ abstract class CrudBean<T, ID extends Serializable> {
         	em.close();
         }
     }
-
+    
+    /**
+     * Busca registros que correspondam aos critérios informados.
+     * 
+     * @param id parâmetro utilizado na operação.
+     * @return resultado da operação.
+     */
     public T buscarPorId(ID id) {
         if (id == null) 
         	return null;
@@ -81,7 +107,12 @@ abstract class CrudBean<T, ID extends Serializable> {
         	em.close();
         }
     }
-
+    
+    /**
+     * Busca registros que correspondam aos critérios informados.
+     * 
+     * @return resultado da operação.
+     */
     public List<T> buscarTodos() {
         EntityManager em = JPAUtil.createEntityManager();
         

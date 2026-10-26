@@ -15,6 +15,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
+/**
+ * Representa um usuário do sistema, incluindo seus dados de acesso e perfil.
+ */
 @Entity
 public class Usuario implements Serializable {
 	

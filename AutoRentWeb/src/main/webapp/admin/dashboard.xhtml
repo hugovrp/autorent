@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="/templates/layout.xhtml">
+		<ui:param name="largo" value="true" />
+	
+		<ui:define name="titulo">Dashboard</ui:define>
+		<ui:define name="conteudo">
+			<h2>Dashboard administrativo</h2>
+	
+			<h:outputText value="#{dashboardMB.mensagemErro}" styleClass="alerta erro"
+				rendered="#{not empty dashboardMB.mensagemErro}" style="display:block;" />
+	
+			<h:outputText value="#{dashboardMB.mensagemSucesso}" styleClass="alerta sucesso"
+				rendered="#{not empty dashboardMB.mensagemSucesso}" style="display:block;" />
+	
+			<div class="cards">
+				<div class="card"><span class="numero">#{dashboardMB.totalVeiculos}</span><span class="rotulo">Veículos na frota</span></div>
+				<div class="card"><span class="numero">#{dashboardMB.totalDisponiveis}</span><span class="rotulo">Disponíveis</span></div>
+				<div class="card"><span class="numero">#{dashboardMB.totalAlugados}</span><span class="rotulo">Alugados</span></div>
+				<div class="card"><span class="numero">#{dashboardMB.totalEmManutencao}</span><span class="rotulo">Em manutenção</span></div>
+				<div class="card"><span class="numero">#{dashboardMB.totalReservas}</span><span class="rotulo">Reservas</span></div>
+				<div class="card"><span class="numero">#{dashboardMB.totalLocacoesAtivas}</span><span class="rotulo">Locações ativas</span></div>
+			</div>
+	
+			<h:form>
+			<h:commandButton value="Atualizar" styleClass="botao secundario" />
+	
+			<h3>Reservas (aguardando retirada)</h3>
+			<h:outputText value="Nenhuma reserva no momento." rendered="#{empty dashboardMB.reservas}" />
+			<h:dataTable value="#{dashboardMB.reservas}" var="l" styleClass="tabela"
+				rendered="#{not empty dashboardMB.reservas}">
+				<h:column>
+					<f:facet name="header">Nº</f:facet>
+					#{l.id}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Cliente</f:facet>
+					#{l.cliente.nome}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Veículo</f:facet>
+					#{l.veiculo.marca} #{l.veiculo.modelo}<br/>
+					<small>#{l.veiculo.placa}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Retirada</f:facet>
+					<h:outputText value="#{l.dataRetirada}">
+						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+					</h:outputText><br/>
+					<small>#{l.agenciaRetirada.nome}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Devolução prevista</f:facet>
+					<h:outputText value="#{l.dataPrevDevolucao}">
+						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+					</h:outputText><br/>
+					<small>#{l.agenciaDevolucao.nome}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Valor total</f:facet>
+					<h:outputText value="#{l.valorTotal}">
+						<f:convertNumber type="currency" currencySymbol="R$ " locale="pt_BR" />
+					</h:outputText>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Ações</f:facet>
+					<h:commandButton value="Registrar retirada" action="#{dashboardMB.registrarRetirada(l.id)}" styleClass="botao" />
+					<h:commandButton value="Cancelar" action="#{dashboardMB.cancelarReserva(l.id)}" styleClass="botao secundario" />
+				</h:column>
+			</h:dataTable>
+	
+			<h3>Locações ativas</h3>
+			<h:outputText value="Nenhuma locação ativa no momento." rendered="#{empty dashboardMB.locacoesAtivas}" />
+			<h:dataTable value="#{dashboardMB.locacoesAtivas}" var="l" styleClass="tabela"
+				rendered="#{not empty dashboardMB.locacoesAtivas}">
+				<h:column>
+					<f:facet name="header">Nº</f:facet>
+					#{l.id}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Cliente</f:facet>
+					#{l.cliente.nome}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Veículo</f:facet>
+					#{l.veiculo.marca} #{l.veiculo.modelo}<br/>
+					<small>#{l.veiculo.placa}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Retirada</f:facet>
+					<h:outputText value="#{l.dataRetirada}">
+						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+					</h:outputText><br/>
+					<small>#{l.agenciaRetirada.nome}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Devolução prevista</f:facet>
+					<h:outputText value="#{l.dataPrevDevolucao}">
+						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+					</h:outputText><br/>
+					<small>#{l.agenciaDevolucao.nome}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Situação</f:facet>
+					<h:outputText value="Atrasada" styleClass="selo atrasada" rendered="#{l.dataPrevDevolucao lt dashboardMB.hoje}" />
+					<h:outputText value="No prazo" styleClass="selo ativa" rendered="#{l.dataPrevDevolucao ge dashboardMB.hoje}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Ações</f:facet>
+					<h:commandButton value="Registrar devolução" action="#{dashboardMB.registrarDevolucao(l.id)}" styleClass="botao" />
+				</h:column>
+			</h:dataTable>
+	
+			</h:form>
+	
+			<h3>Veículos atualmente alugados</h3>
+			<h:outputText value="Nenhum veículo alugado no momento." rendered="#{empty dashboardMB.veiculosAlugados}" />
+			<h:dataTable value="#{dashboardMB.veiculosAlugados}" var="v" styleClass="tabela"
+				rendered="#{not empty dashboardMB.veiculosAlugados}">
+				<h:column>
+					<f:facet name="header">Veículo</f:facet>
+					#{v.marca} #{v.modelo}<br/>
+					<small>#{v.placa}</small>
+				</h:column>
+				<h:column>
+					<f:facet name="header">Agência de origem</f:facet>
+					#{v.agencia.nome}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Cliente</f:facet>
+					<h:outputText value="#{dashboardMB.locacaoAtivaPorVeiculo[v.id].cliente.nome}"
+						rendered="#{not empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
+					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Retirada</f:facet>
+					<h:outputText value="#{dashboardMB.locacaoAtivaPorVeiculo[v.id].dataRetirada}"
+						rendered="#{not empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}">
+						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+					</h:outputText>
+					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
+				</h:column>
+				<h:column>
+					<f:facet name="header">Devolução prevista</f:facet>
+					<h:outputText value="#{dashboardMB.locacaoAtivaPorVeiculo[v.id].dataPrevDevolucao}"
+						rendered="#{not empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}">
+						<f:convertDateTime type="localDate" pattern="dd/MM/yyyy" />
+					</h:outputText>
+					<h:outputText value="-" rendered="#{empty dashboardMB.locacaoAtivaPorVeiculo[v.id]}" />
+				</h:column>
+			</h:dataTable>
+	
+			<h3>Veículos disponíveis por agência</h3>
+			<h:dataTable value="#{dashboardMB.agencias}" var="a" styleClass="tabela">
+				<h:column>
+					<f:facet name="header">Agência</f:facet>
+					#{a.nome} - #{a.cidade}
+				</h:column>
+				<h:column>
+					<f:facet name="header">Disponíveis</f:facet>
+					#{dashboardMB.disponiveisDa(a)}
+				</h:column>
+			</h:dataTable>
+		</ui:define>
+	</ui:composition>
+</html>

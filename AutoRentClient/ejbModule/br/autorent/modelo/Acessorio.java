@@ -12,6 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 
+/**
+ * Representa um acessório que pode ser associado a veículos da frota.
+ */
 @Entity
 public class Acessorio implements Serializable {
 

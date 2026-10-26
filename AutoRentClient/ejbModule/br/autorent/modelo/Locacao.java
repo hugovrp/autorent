@@ -16,6 +16,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
+/**
+ * Representa uma reserva ou locação de um veículo por um cliente.
+ */
 @Entity
 public class Locacao implements Serializable {
 
@@ -55,7 +58,7 @@ public class Locacao implements Serializable {
 	private LocalDate dataPrevDevolucao;
 	
 	// Preenchida somente quando o veículo é efetivamente devolvido
-	@Column(name = "data_devolucao", nullable = false)
+	@Column(name = "data_devolucao")
 	private LocalDate dataDevolucao;
 	
 	@Enumerated(EnumType.STRING)
@@ -64,6 +67,7 @@ public class Locacao implements Serializable {
 	
 	@Column(name = "valor_total")
 	private Double valorTotal;
+	
 	
 	public Locacao() { }
 

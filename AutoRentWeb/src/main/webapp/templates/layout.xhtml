@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+	<f:metadata>
+		<ui:insert name="metadata" />
+	</f:metadata>
 	<h:head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<title>AutoRent - <ui:insert name="titulo">Locadora de Veículos</ui:insert></title>
-		<h:outputStylesheet library="css" name="style.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<h:outputStylesheet library="css" name="base.css" />
+		<h:outputStylesheet library="css" name="layout.css" />
+		<h:outputStylesheet library="css" name="forms.css" />
+		<h:outputStylesheet library="css" name="components.css" />
+		<h:outputStylesheet library="css" name="tabelas.css" />
 	</h:head>
 	
 	<h:body>
 		<div class="topo">
 			<h1 class="marca">AutoRent</h1>
 			<h:form>
-				<h:link outcome="index" value="Início" />
-				<h:link outcome="home" value="Minha área" rendered="#{sessaoMB.logado}" />
-				<h:link outcome="veiculos" value="Veículos" rendered="#{sessaoMB.logado}" />
-				<h:link outcome="login" value="Entrar" rendered="#{not sessaoMB.logado}" />
-				<h:link outcome="cadastro" value="Cadastrar-se" rendered="#{not sessaoMB.logado}" />
-				<h:commandLink action="#{sessaoMB.logout}" value="Sair" rendered="#{sessaoMB.logado}" style="color:#fff; margin-left:16px;" />
+				<h:link outcome="/index" value="Início" />
+				<h:link outcome="/home" value="Minha área" rendered="#{sessaoMB.logado}" />
+				<h:link outcome="/veiculos" value="Veículos" rendered="#{sessaoMB.logado}" />
+				<h:link outcome="/admin/dashboard" value="Dashboard" rendered="#{sessaoMB.admin}" />
+				<h:link outcome="/dashboard" value="Meu painel" rendered="#{sessaoMB.cliente}" />
+				<h:link outcome="/minhasReservas" value="Minhas reservas" rendered="#{sessaoMB.cliente}" />
+				<h:link outcome="/login" value="Entrar" rendered="#{not sessaoMB.logado}" />
+				<h:link outcome="/cadastro" value="Cadastrar-se" rendered="#{not sessaoMB.logado}" />
+				<h:commandLink action="#{sessaoMB.logout}" value="Sair" rendered="#{sessaoMB.logado}" />
 			</h:form>
 		</div>
 	

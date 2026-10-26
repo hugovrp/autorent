@@ -1,0 +1,87 @@
+/* forms.css - campos, botões, mensagens de validação e filtros. */
+.campo {
+	margin-bottom: 1.125rem;
+}
+
+.campo label {
+	display: block;
+	margin-bottom: .375rem;
+	font-size: .875rem;
+	font-weight: 600;
+	color: #374151;
+}
+
+.campo input,
+.campo select {
+	width: 100%;
+	min-height: 2.5rem;
+	padding: .55rem .75rem;
+	font: inherit;
+	color: var(--cor-texto);
+	background: var(--cor-superficie);
+	border: 1px solid var(--cor-borda-campo);
+	border-radius: var(--raio-pequeno);
+	transition: border-color .15s, box-shadow .15s;
+}
+
+.campo input:focus,
+.campo select:focus {
+	outline: none;
+	border-color: var(--cor-primaria);
+	box-shadow: 0 0 0 3px rgba(29, 78, 216, .2);
+}
+
+.erro-campo {
+	display: block;
+	margin-top: .375rem;
+	font-size: .8125rem;
+	color: #b91c1c;
+}
+
+.botao {
+	display: inline-block;
+	padding: .65rem 1.25rem;
+	font: inherit;
+	font-size: .9375rem;
+	font-weight: 600;
+	line-height: 1.2;
+	color: #fff;
+	background: var(--cor-primaria);
+	border: 1px solid transparent;
+	border-radius: var(--raio-pequeno);
+	cursor: pointer;
+	transition: background .15s;
+}
+
+.botao:hover {
+	background: var(--cor-primaria-escura);
+}
+
+.botao.secundario {
+	color: #374151;
+	background: var(--cor-superficie);
+	border-color: var(--cor-borda-campo);
+}
+
+.botao.secundario:hover {
+	background: var(--cor-cabecalho-tabela);
+}
+
+.filtros {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.filtros .campo {
+	flex: 0 1 200px;
+	margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+	.filtros .campo {
+		flex-basis: 100%;
+	}
+}
